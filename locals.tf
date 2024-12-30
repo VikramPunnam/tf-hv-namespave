@@ -1,3 +1,7 @@
+
+
+
+
 locals {
   project_ids = ["proj1", "proj2", "proj3"] # Example list of project_ids
   app_id      = "my-app"                   # Example app_id
@@ -93,4 +97,53 @@ resource "vault_azure_secret_backend" "azure_backends" {
   client_id            = "your-client-id"                  # Replace with your Azure client ID
   client_secret        = "your-client-secret"              # Replace with your Azure client secret
   subscription_id      = each.value.identifier
+}
+
+
+
+locals {
+  project_ids      = ["proj1", "proj2", "proj3"]         # Example list of GCP project IDs
+  subscription_ids = ["sub1", "sub2", "sub3"]           # Example list of Azure subscription IDs
+  app_id           = "my-app"                          # Example app_id
+  cloud_provider   = "gcp"                             # Example cloud provider ("gcp" or "azure")
+  
+  # Determine identifiers based on the cloud provider
+  identifiers = (
+    local.cloud_provider == "gcp" ? local.project_ids : local.subscription_ids
+  )
+}
+
+# Step 1: Fetch credentials from Vault
+data "vault_generic_secret" "credentials" {
+  for_each = toset(local.identifiers)
+
+  path = "secret/data/${local.app_id}/${each.value}"
+}
+
+# Step 2: Write credentials to files dynamically
+resource "local_file" "credentials_file" {
+  for_each = data.vault_generic_secret.credentials
+
+  filename = "${path.module}/credentials_${each.key}.json" # Output file path
+  content  = jsonencode(each.value.data["data"])          # Write the fetched credentials
+}
+
+# Step 3: Use the credentials in GCP or Azure secret backends
+resource "vault_gcp_secret_backend" "gcp_backends" {
+  for_each = local.cloud_provider == "gcp" ? local.identifiers : {}
+
+  backend       = "gcp_${local.app_id}_${each.value}"
+  project       = each.value
+  credentials   = local_file.credentials_file[each.key].filename # Use the dynamically created file
+  token_scopes  = ["https://www.googleapis.com/auth/cloud-platform"]
+}
+
+resource "vault_azure_secret_backend" "azure_backends" {
+  for_each = local.cloud_provider == "azure" ? local.identifiers : {}
+
+  backend              = "azure_${local.app_id}_${each.value}"
+  subscription_id      = each.value
+  tenant_id            = data.vault_generic_secret.credentials[each.key].data["data"]["tenant_id"]
+  client_id            = data.vault_generic_secret.credentials[each.key].data["data"]["client_id"]
+  client_secret        = data.vault_generic_secret.credentials[each.key].data["data"]["client_secret"]
 }
