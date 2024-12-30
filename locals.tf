@@ -202,3 +202,98 @@ resource "vault_azure_secret_backend" "azure_backends" {
 output "secret_backends" {
   value = local.secret_backends
 }
+
+
+
+
+
+
+locals {
+  # Define your project and subscription IDs
+  project_ids      = ["proj1", "proj2", "proj3"] # GCP project IDs
+  subscription_ids = ["sub1", "sub2", "sub3"]    # Azure subscription IDs
+  app_id           = "my-app"                    # Application identifier
+  sdlc_name        = "dev"                       # SDLC environment
+  lob              = ""                          # Line of Business
+  cloud_provider   = "gcp"                       # Cloud provider ("gcp" or "azure")
+
+  # Determine the namespace based on Line of Business (lob)
+  vault_namespace = local.lob != "" ? "${local.lob}_${local.sdlc_name}_namespace" : "${local.cloud_provider}_${local.sdlc_name}_namespace"
+
+  # Select identifiers based on the cloud provider
+  identifiers = local.cloud_provider == "gcp" ? local.project_ids : local.subscription_ids
+
+  # Define roles and their capabilities
+  roles = {
+    admin    = ["create", "read", "update", "delete", "list"]
+    dev      = ["create", "read", "update", "delete"]
+    ro       = ["read", "list"]
+    app_role = ["read"]
+  }
+
+  # Construct secret backend paths
+  secret_backends = {
+    for id in local.identifiers : "${id}_${local.app_id}" => {
+      id        = id
+      namespace = local.vault_namespace
+      path      = "${local.vault_namespace}/backend_${local.app_id}_${id}"
+    }
+  }
+}
+
+# Ensure the Vault namespace exists
+resource "vault_namespace" "namespace" {
+  name = local.vault_namespace
+}
+
+# Fetch credentials from Vault based on the cloud provider
+data "vault_generic_secret" "credentials" {
+  for_each = toset(local.identifiers)
+
+  path = "secret/data/${local.app_id}/${each.value}" # Vault path for credentials
+}
+
+# Create secret backends based on the cloud provider
+resource "vault_gcp_secret_backend" "gcp_backends" {
+  for_each = local.cloud_provider == "gcp" ? local.secret_backends : {}
+
+  backend     = each.value.path
+  project     = each.value.id
+  credentials = data.vault_generic_secret.credentials[each.value.id].data["data"]["credentials"]
+  token_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+
+  depends_on = [vault_namespace.namespace]
+}
+
+resource "vault_azure_secret_backend" "azure_backends" {
+  for_each = local.cloud_provider == "azure" ? local.secret_backends : {}
+
+  backend         = each.value.path
+  subscription_id = each.value.id
+  tenant_id       = data.vault_generic_secret.credentials[each.value.id].data["data"]["tenant_id"]
+  client_id       = data.vault_generic_secret.credentials[each.value.id].data["data"]["client_id"]
+  client_secret   = data.vault_generic_secret.credentials[each.value.id].data["data"]["client_secret"]
+
+  depends_on = [vault_namespace.namespace]
+}
+
+# Create policies for each secret backend and role
+resource "vault_policy" "secret_policies" {
+  for_each = {
+    for id, backend in local.secret_backends : id => backend
+  }
+
+  name   = each.key
+  policy = join("\n", [
+    for role, capabilities in local.roles : <<-EOT
+      path "${each.value.path}/*" {
+        capabilities = ${jsonencode(capabilities)}
+      }
+    EOT
+  ])
+}
+
+# Output for debugging
+output "secret_backends" {
+  value = local.secret_backends
+}
