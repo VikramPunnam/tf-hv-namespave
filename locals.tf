@@ -147,3 +147,58 @@ resource "vault_azure_secret_backend" "azure_backends" {
   client_id            = data.vault_generic_secret.credentials[each.key].data["data"]["client_id"]
   client_secret        = data.vault_generic_secret.credentials[each.key].data["data"]["client_secret"]
 }
+
+
+locals {
+  project_ids      = ["proj1", "proj2", "proj3"] # Example list of GCP project IDs
+  subscription_ids = ["sub1", "sub2", "sub3"]   # Example list of Azure subscription IDs
+  app_id           = "my-app"                  # Example app_id
+  sdlc_name        = "dev"                     # Example SDLC environment
+  lob              = ""                        # Example Line of Business
+  cloud_provider   = "gcp"                     # Example cloud provider ("gcp" or "azure")
+  
+  # Namespace name based on `lob`
+  vault_namespace = local.lob != "" ? "${local.lob}_${local.sdlc_name}_namespace" : "gcp_${local.sdlc_name}_namespace"
+
+  # Determine identifiers based on cloud provider
+  identifiers = local.cloud_provider == "gcp" ? local.project_ids : local.subscription_ids
+
+  # Construct the map for secret backends
+  secret_backends = {
+    for id in local.identifiers : "${local.vault_namespace}/backend_${local.app_id}_${id}" => {
+      id        = id
+      namespace = local.vault_namespace
+      path      = "${local.vault_namespace}/backend_${local.app_id}_${id}"
+    }
+  }
+}
+
+# Vault namespace creation (example, ensure the namespace exists in Vault)
+resource "vault_namespace" "namespace" {
+  name = local.vault_namespace
+}
+
+# Secret backend creation (iterates over the secret_backends map)
+resource "vault_gcp_secret_backend" "gcp_backends" {
+  for_each = local.cloud_provider == "gcp" ? local.secret_backends : {}
+
+  backend       = each.value.path
+  project       = each.value.id
+  credentials   = file("/path/to/credentials.json") # Path to the GCP credentials
+  token_scopes  = ["https://www.googleapis.com/auth/cloud-platform"]
+}
+
+resource "vault_azure_secret_backend" "azure_backends" {
+  for_each = local.cloud_provider == "azure" ? local.secret_backends : {}
+
+  backend              = each.value.path
+  subscription_id      = each.value.id
+  tenant_id            = "example-tenant-id" # Replace with tenant ID
+  client_id            = "example-client-id" # Replace with client ID
+  client_secret        = "example-client-secret" # Replace with client secret
+}
+
+# Output the map for debugging purposes
+output "secret_backends" {
+  value = local.secret_backends
+}
