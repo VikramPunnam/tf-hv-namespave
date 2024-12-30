@@ -297,3 +297,57 @@ resource "vault_policy" "secret_policies" {
 output "secret_backends" {
   value = local.secret_backends
 }
+
+
+locals {
+  # Define your project and subscription IDs
+  project_ids      = ["proj1", "proj2", "proj3"] # GCP project IDs
+  subscription_ids = ["sub1", "sub2", "sub3"]    # Azure subscription IDs
+  app_id           = "my-app"                    # Application identifier
+  cloud_provider   = "gcp"                       # Cloud provider ("gcp" or "azure")
+
+  # Select identifiers based on the cloud provider
+  identifiers = local.cloud_provider == "gcp" ? local.project_ids : local.subscription_ids
+
+  # Construct secret backend paths
+  secret_backends = {
+    for id in local.identifiers : "${id}_${local.app_id}" => {
+      id   = id
+      path = "secret/data/${local.app_id}/${id}"
+    }
+  }
+}
+
+# Define policies for each secret backend
+resource "vault_policy" "admin_policy" {
+  for_each = local.secret_backends
+
+  name   = "${each.key}_admin"
+  policy = <<EOT
+path "${each.value.path}/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+EOT
+}
+
+resource "vault_policy" "developer_policy" {
+  for_each = local.secret_backends
+
+  name   = "${each.key}_dev"
+  policy = <<EOT
+path "${each.value.path}/*" {
+  capabilities = ["create", "read", "update", "list"]
+}
+EOT
+}
+
+resource "vault_policy" "read_only_policy" {
+  for_each = local.secret_backends
+
+  name   = "${each.key}_ro"
+  policy = <<EOT
+path "${each.value.path}/*" {
+  capabilities = ["read", "list"]
+}
+EOT
+}
