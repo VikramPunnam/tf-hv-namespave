@@ -351,3 +351,20 @@ path "${each.value.path}/*" {
 }
 EOT
 }
+
+1. Reviewed the Terraform registry to find a resource for automating the rotation of the Azure SPN root.
+
+
+2. No specific resource is available in the Terraform registry for this purpose.
+
+
+3. The Vault generic secret resource can be used to rotate the secret, as it acts as an API for creating and updating.
+
+
+4. This approach requires comprehensive testing.
+
+
+5. Santhosh has requested the SPN. Once we receive it, I will initiate testing for root rotation in the sandbox environment.
+
+
+
