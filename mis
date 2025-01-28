@@ -4,3 +4,14 @@ Could we onboard HEHV to AAP to facilitate job scheduling for log rotation on th
 
 I have some experience with writing and managing configuration management using Ansible, and I’d be happy to contribute by creating Ansible automation scripts.
 
+Subject: Discussion on Vault Log Rotation
+
+Hi [Recipient's Name],
+
+I spoke with Nathan about automating tasks for ControlPlane (e.g., patching, log rotation, upgrades, etc.) and considered utilizing the Ansible platform for this purpose. He recommended reaching out to you specifically regarding the log rotation.
+
+Would it be possible to have a quick discussion about this when you have a moment?
+
+Best regards,
+[Your Name]
+
