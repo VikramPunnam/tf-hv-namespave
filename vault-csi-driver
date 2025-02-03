@@ -87,3 +87,204 @@ Implementation Steps
 
 Would you like a step-by-step guide on installation and configuration?
 
+
+
+Step-by-Step Guide to Deploying the Vault CSI Driver in OpenShift
+
+This guide covers setting up HashiCorp Vault, installing the Vault CSI driver, and securely injecting secrets into OpenShift pods.
+
+
+---
+
+Step 1: Deploy HashiCorp Vault in OpenShift
+
+You can deploy Vault either inside OpenShift or use an external Vault instance. Below are the steps for an OpenShift deployment.
+
+1.1 Deploy Vault using the HashiCorp Vault Operator
+
+oc new-project vault
+oc apply -f https://developer.hashicorp.com/vault/_downloads/operator/deployment.yaml
+
+This installs the Vault operator, which helps manage Vault instances in OpenShift.
+
+1.2 Deploy Vault as a StatefulSet
+
+Create a Vault deployment:
+
+cat <<EOF | oc apply -f -
+apiVersion: vault.hashicorp.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  size: 1
+  image: hashicorp/vault:latest
+  volumeMounts:
+    - name: data
+      mountPath: /vault/data
+EOF
+
+1.3 Initialize Vault & Unseal
+
+Once deployed, initialize Vault:
+
+oc exec -it vault-0 -- vault operator init
+
+Vault generates unseal keys. Use three of them to unseal Vault:
+
+oc exec -it vault-0 -- vault operator unseal <unseal-key-1>
+oc exec -it vault-0 -- vault operator unseal <unseal-key-2>
+oc exec -it vault-0 -- vault operator unseal <unseal-key-3>
+
+Login with the root token:
+
+oc exec -it vault-0 -- vault login <root-token>
+
+
+---
+
+Step 2: Enable Kubernetes Authentication in Vault
+
+Vault needs to authenticate OpenShift workloads.
+
+2.1 Enable Kubernetes Authentication
+
+vault auth enable kubernetes
+
+2.2 Configure Kubernetes Authentication
+
+Find the OpenShift API server URL:
+
+oc whoami --show-server
+
+Configure Vault with this URL:
+
+vault write auth/kubernetes/config \
+    kubernetes_host="https://kubernetes.default.svc:443"
+
+2.3 Create a Vault Role for OpenShift Applications
+
+vault write auth/kubernetes/role/my-app \
+    bound_service_account_names=vault-sa \
+    bound_service_account_namespaces=default \
+    policies=my-policy \
+    ttl=24h
+
+This binds the role to a ServiceAccount in OpenShift.
+
+
+---
+
+Step 3: Install Vault CSI Driver in OpenShift
+
+3.1 Install Vault CSI Driver
+
+oc apply -f https://github.com/hashicorp/vault-csi-provider/releases/latest/download/deployment.yaml
+
+Verify the CSI driver is running:
+
+oc get pods -n kube-system | grep vault
+
+
+---
+
+Step 4: Create a Vault Policy
+
+Create a policy that grants access to secrets:
+
+vault policy write my-policy - <<EOF
+path "secret/data/myapp" {
+  capabilities = ["read"]
+}
+EOF
+
+
+---
+
+Step 5: Storing a Secret in Vault
+
+vault kv put secret/myapp username="admin" password="supersecret"
+
+
+---
+
+Step 6: Create a Kubernetes SecretProviderClass
+
+This defines how secrets are fetched from Vault.
+
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
+metadata:
+  name: vault-secrets
+  namespace: default
+spec:
+  provider: vault
+  parameters:
+    roleName: "my-app"
+    vaultAddress: "http://vault.vault.svc:8200"
+    objects: |
+      - objectName: "my-secret"
+        secretPath: "secret/data/myapp"
+        secretKey: "password"
+
+Apply it:
+
+oc apply -f vault-secretprovider.yaml
+
+
+---
+
+Step 7: Mount Vault Secrets in an OpenShift Pod
+
+Now, create a pod that mounts secrets using the CSI driver.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vault-test
+  namespace: default
+spec:
+  serviceAccountName: vault-sa
+  containers:
+    - name: myapp
+      image: busybox
+      command: [ "sleep", "3600" ]
+      volumeMounts:
+        - name: vault-secrets
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+  volumes:
+    - name: vault-secrets
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: "vault-secrets"
+
+Apply it:
+
+oc apply -f vault-pod.yaml
+
+Verify secrets are injected:
+
+oc exec -it vault-test -- cat /mnt/secrets-store/my-secret
+
+
+---
+
+Next Steps
+
+Implement auto-secret rotation.
+
+Integrate with database engines for dynamic secrets.
+
+Use Vault Agent for advanced secret management.
+
+
+Would you like additional details on any step?
+
+
+
+
+
