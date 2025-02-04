@@ -24,3 +24,7 @@ Thanks, Scott, for assisting with the Luna client installation on the Vault serv
 Great interactions with Nathan and valuable knowledge sharing.
 
 
+CR Description:
+
+This change updates the log rotation configuration for Vault audit logs. Instead of rotating logs monthly, the new configuration will rotate the log file when it reaches 20GB in size. This ensures better log management based on file size rather than a fixed time interval.
+
