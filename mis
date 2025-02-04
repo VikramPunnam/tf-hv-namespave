@@ -28,3 +28,7 @@ CR Description:
 
 This change updates the log rotation configuration for Vault audit logs. Instead of rotating logs monthly, the new configuration will rotate the log file when it reaches 20GB in size. This ensures better log management based on file size rather than a fixed time interval.
 
+
+
+Using log rotation based on a size threshold instead of a fixed time interval ensures efficient disk space management, prevents excessive log growth, and optimizes system performance by reducing unnecessary file operations. It adapts to varying log volumes, making it ideal for high-traffic environments while avoiding unnecessary rotations during low activity. This approach also improves log
+
