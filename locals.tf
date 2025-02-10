@@ -367,4 +367,20 @@ EOT
 5. Santhosh has requested the SPN. Once we receive it, I will initiate testing for root rotation in the sandbox environment.
 
 
+locals {
+  vault_namespace = (
+    var.provider == "azure" && var.crown_jewel ? 
+    "${var.appid}-${var.env}-crown_jewel-namespace" :
+    
+    var.provider == "azure" ? 
+    "azure-${var.env}-namespace" :
+    
+    var.provider == "gcp" && length(var.lob) > 0 ? 
+    "${var.lob}-sdlc-namespace" :
+    
+    var.provider == "gcp" ? 
+    "gcp-sdlc-namespace" :
 
+    "default-namespace"
+  )
+}
