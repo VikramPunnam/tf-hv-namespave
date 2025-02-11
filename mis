@@ -32,3 +32,24 @@ This change updates the log rotation configuration for Vault audit logs. Instead
 
 Using log rotation based on a size threshold instead of a fixed time interval ensures efficient disk space management, prevents excessive log growth, and optimizes system performance by reducing unnecessary file operations. It adapts to varying log volumes, making it ideal for high-traffic environments while avoiding unnecessary rotations during low activity. This approach also improves log
 
+The choice between size and maxsize in logrotate depends on your specific use case:
+
+size: Ensures log rotation happens when the file exceeds the specified size, but rotation only occurs during the scheduled logrotate run (e.g., daily, weekly). If the file reaches the limit before the next run, it won't rotate immediately.
+
+maxsize: Forces an immediate rotation once the log exceeds the specified size, regardless of the logrotate schedule.
+
+
+Which One is Best?
+
+Use size if you want logs to be checked and rotated on a scheduled basis.
+
+Use maxsize if you want real-time log rotation as soon as the file grows beyond a threshold.
+
+
+If you need both scheduled and real-time rotation, you can combine them. For example:
+
+size 100M
+maxsize 200M
+
+This ensures logs rotate at 100MB during the scheduled run but will also rotate immediately if they reach 200MB before the next scheduled run.
+
