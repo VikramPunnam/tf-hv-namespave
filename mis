@@ -53,3 +53,7 @@ maxsize 200M
 
 This ensures logs rotate at 100MB during the scheduled run but will also rotate immediately if they reach 200MB before the next scheduled run.
 
+
+logrotation:
+Implementing this change ensures efficient log management by rotating logs based on size rather than a fixed schedule, preventing disk overutilization and optimizing performance. It enables real-time log rotation, reduces unnecessary rotations, and provides better log retention control. If not implemented, logs may grow uncontrollably, leading to potential disk space issues, service disruptions, inefficient log rotation, inconsistent log management, and increased manual intervention. This change helps maintain system stability and reduces administrative overhead.
+
