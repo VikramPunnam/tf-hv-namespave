@@ -1,78 +1,61 @@
-Subject: Confirmation Required: Rotating Root Credentials in Azure Secret Engine Using Application.ReadWrite.OwnedBy
+Subject: Possible Approach for Rotating Root Credentials in Azure Secret Engine Using Application.ReadWrite.OwnedBy
 
 Dear [Recipient's Name],
 
 I hope you’re doing well.
 
-I am reaching out to discuss the feasibility of rotating root credentials in Azure Secret Engine (HashiCorp Vault) using the Application.ReadWrite.OwnedBy permission instead of the broader Application.ReadWrite.All. This email outlines the problem statement, the proposed solution, relevant official documentation, and the need for thorough testing to confirm its effectiveness.
+Below is a possible approach for rotating root credentials in Azure Secret Engine (HashiCorp Vault) using the Application.ReadWrite.OwnedBy permission instead of the broader Application.ReadWrite.All.
 
 
 ---
 
-Problem Statement
+Possible Approach
 
-In Azure Secret Engine (HashiCorp Vault), rotating root credentials for a configured Service Principal (SPN) is an essential security measure. This operation requires Microsoft Graph API permissions to modify Azure AD applications.
+The Application.ReadWrite.OwnedBy permission allows an SPN to modify only the applications it owns in Azure AD. This makes it a more restrictive and secure alternative to Application.ReadWrite.All, which provides full directory-wide access.
 
-By default, Application.ReadWrite.All is often used because it grants full administrative access over all applications in the directory. However, this level of access introduces security risks, as it is broader than necessary.
+When It Can Work for Root Credential Rotation:
 
-The goal is to determine whether Application.ReadWrite.OwnedBy—which restricts modifications to applications that the managing SPN already owns—can be used instead.
-
-
----
-
-Proposed Solution
-
-Understanding Application.ReadWrite.OwnedBy
-
-This permission allows an SPN to modify only the applications it owns in Azure AD.
-
-It does not allow modifications to applications the SPN does not own, unlike Application.ReadWrite.All, which provides unrestricted directory-wide access.
-
-Using Application.ReadWrite.OwnedBy follows least-privilege security principles, reducing risks associated with excessive permissions.
-
-
-When Application.ReadWrite.OwnedBy Works for Root Credential Rotation
-
-1. For Dynamically Created SPNs (✅ Expected to Work)
+1. For Dynamically Created SPNs (✅ Possible)
 
 If Vault dynamically creates and manages SPNs, the managing SPN is automatically assigned as the owner of these applications.
 
-Since Application.ReadWrite.OwnedBy allows managing owned applications, root credential rotation should work as expected.
+Since Application.ReadWrite.OwnedBy allows modifications to owned applications, root credential rotation should be possible in this scenario.
 
 
 
-2. For Pre-Existing SPNs (⚠️ Requires Ownership Assignment)
+2. For Pre-Existing SPNs (⚠️ Ownership Required)
 
-If Vault needs to rotate credentials for an existing SPN, the managing SPN must already be an owner of that SPN.
+If the SPN whose credentials need rotation was pre-created, the managing SPN must already be an owner of the target SPN.
 
-If the managing SPN is not an owner, Application.ReadWrite.OwnedBy will not work.
+If the managing SPN is not an owner, Application.ReadWrite.OwnedBy will not work, and either:
 
-To use Application.ReadWrite.OwnedBy, the managing SPN must first be manually assigned as an owner of the target SPN.
+Ownership must be manually assigned to the managing SPN, or
 
-If ownership cannot be assigned, Application.ReadWrite.All would still be required.
-
-
+Application.ReadWrite.All would still be required.
 
 
-Key Considerations
 
-This method ensures secure and restricted credential management.
 
-It prevents granting unnecessary permissions beyond the applications the managing SPN owns.
 
-However, there is no specific official documentation confirming this exact use case. Based on the permission’s definition, it is expected to work, but thorough testing is required before full implementation.
+Security & Compliance Benefits
+
+Minimizes privilege exposure by limiting access to only owned applications.
+
+Follows least-privilege security principles, reducing security risks.
+
+Prevents unnecessary administrative access to unrelated applications.
 
 
 
 ---
 
-Useful References & Official Documentation
+Relevant Official Documentation
 
-Though there is no explicit Microsoft or HashiCorp documentation confirming that Application.ReadWrite.OwnedBy supports root credential rotation, the following references provide relevant information:
+Though there is no specific official document confirming this exact use case, the following references provide relevant insights:
 
 1. HashiCorp Vault – Azure Secrets Engine
 
-Official documentation on configuring Vault to manage Azure credentials.
+Documentation on configuring Vault for managing Azure credentials.
 
 https://developer.hashicorp.com/vault/docs/secrets/azure
 
@@ -82,45 +65,8 @@ https://developer.hashicorp.com/vault/docs/secrets/azure
 
 Details on Application.ReadWrite.OwnedBy and its scope.
 
-https://learn.microsoft.com/en-us/graph/permissions-reference
+[https://learn.microsoft.com/en-us/graph/permissions-reference](https://learn.microsoft
 
 
 
-3. Azure AD – Assigning Owners to Applications
-
-Steps to manually assign ownership to an application, which is necessary for using Application.ReadWrite.OwnedBy with pre-existing SPNs.
-
-https://learn.microsoft.com/en-us/azure/active-directory/manage-apps/add-remove-application-owners
-
-
-
-
-
----
-
-Next Steps & Required Confirmation
-
-Thorough testing is required to confirm whether Application.ReadWrite.OwnedBy successfully allows root credential rotation.
-
-Please verify whether Vault is managing dynamically created SPNs or pre-existing ones.
-
-If dealing with pre-existing SPNs, check whether the managing SPN is already an owner or if ownership needs to be assigned.
-
-If ownership assignment is required, we should test whether manually adding ownership allows credential rotation.
-
-If testing confirms that Application.ReadWrite.OwnedBy is sufficient, we can proceed with this least-privileged approach. Otherwise, Application.ReadWrite.All will still be required.
-
-
-Looking forward to your feedback and test results.
-
-Best regards,
-[Your Name]
-[Your Position]
-[Your Contact Information]
-[Your Company Name]
-
-
----
-
-This version makes it clear that testing is required before confirming feasibility, while still providing a structured, professional explanation. Let me know if you need any refinements!
 
