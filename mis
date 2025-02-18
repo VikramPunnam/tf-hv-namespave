@@ -59,3 +59,41 @@ Implementing this change ensures efficient log management by rotating logs based
 
 This change needs to be deployed to ensure that Vault logs are rotated efficiently based on size rather than a fixed schedule. Deploying this change prevents potential disk space issues caused by rapid log growth, which could impact system performance and availability. Without this deployment, logs may not rotate in time, leading to increased disk usage and potential service disruptions. Since the change has been tested successfully in the UAT environment, moving it to production will help maintain system stability and ensure consistent log management.
 
+
+
+Here’s a well-framed update:
+
+
+---
+
+Subject: Update on Prisma APIs Migration to Vault
+
+Hi Team,
+
+Here’s the latest update on the Prisma APIs migration to Vault:
+
+1. Connected with Taye and his team to review the architecture diagram. They are still working on the Python script development.
+
+
+2. Gained access to Harness Dev and created a sample pipeline for the Python script (for testing purposes only) under the app-dctrn project.
+
+
+3. In dev-vault, created a KV path for Prisma, set up a role inside approle, and provided the Role ID and Secret to Taye’s team for testing. Buchi from their team confirmed they were able to generate the token successfully, and it is working as expected in the Python script.
+
+
+4. Today, Taye scheduled a call to discuss the next steps and further understanding.
+
+
+
+Going forward, my focus will be on pipeline creation and addressing Vault-side requirements.
+
+Let me know if you have any questions.
+
+Best,
+[Your Name]
+
+
+---
+
+This version keeps it structured, professional, and easy to understand. Let me know if you'd like any tweaks!
+
