@@ -97,3 +97,9 @@ Best,
 
 This version keeps it structured, professional, and easy to understand. Let me know if you'd like any tweaks!
 
+
+
+I have a question regarding Vault authentication from Harness.
+
+There are multiple authentication methods available, including using connectors and the secret manager. If we choose the connector approach, should I create a new connector and configure it, or can we use an existing one? Please let me know.
+
