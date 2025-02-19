@@ -103,3 +103,36 @@ I have a question regarding Vault authentication from Harness.
 
 There are multiple authentication methods available, including using connectors and the secret manager. If we choose the connector approach, should I create a new connector and configure it, or can we use an existing one? Please let me know.
 
+
+
+
+
+import os
+
+# Get the certificate file path from the environment variable
+cert_path = os.getenv("CERT_PATH")
+
+if not cert_path:
+    print("Error: CERT_PATH environment variable is not set.")
+    exit(1)
+
+# Read the certificate file from the environment variable path
+try:
+    with open(cert_path, "r") as cert_file:
+        cert_env_content = cert_file.read()
+except FileNotFoundError:
+    print(f"Error: Certificate file at {cert_path} not found.")
+    exit(1)
+
+# Read another certificate file for comparison
+other_cert_path = "/path/to/other_cert.pem"  # Update with the actual path
+try:
+    with open(other_cert_path, "r") as other_cert_file:
+        cert_other_content = other_cert_file.read()
+except FileNotFoundError:
+    print(f"Error: Certificate file at {other_cert_path} not found.")
+    exit(1)
+
+# Compare the certificates
+if cert_env_content == cert_other_content:
+    print("Certificates match
