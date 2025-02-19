@@ -136,3 +136,31 @@ except FileNotFoundError:
 # Compare the certificates
 if cert_env_content == cert_other_content:
     print("Certificates match
+
+
+
+Here’s a well-formatted version of your email:
+
+
+---
+
+Subject: Request to Process CR Within Timeline
+
+Dear [Recipient's Name],
+
+I have created the following CR and would appreciate your support in assigning it to an engineer for further processing. This will help ensure timely preparation and avoid any blockers.
+
+Please proceed with the necessary steps at the earliest.
+
+Thanks in advance for your assistance.
+
+Best regards,
+[Your Name]
+[Your Designation]
+[Your Company]
+
+
+---
+
+Let me know if you need any modifications!
+
