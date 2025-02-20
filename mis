@@ -192,3 +192,16 @@ The can(regex(...)) function validates the format and returns an error if it doe
 
 This will ensure that subname_123456 format is followed while allowing different alphanumeric values for subname.
 
+
+
+
+variable "app_id" {
+  description = "Application ID"
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.crownjewel ? (var.app_id != null && var.app_id != "") : true
+    error_message = "app_id must be provided if crownjewel is true."
+  }
+}
