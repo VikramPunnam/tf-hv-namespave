@@ -164,3 +164,31 @@ Best regards,
 
 Let me know if you need any modifications!
 
+
+
+
+If the subname can be any alphanumeric value but must be followed by an underscore and exactly six digits, you can use the following Terraform variable validation:
+
+variable "resource_name" {
+  description = "Resource name must follow the pattern <subname>_123456, where <subname> is alphanumeric and followed by an underscore and exactly six digits."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[a-zA-Z0-9]+_\\d{6}$", var.resource_name))
+    error_message = "The resource_name must be in the format <subname>_123456, where <subname> is alphanumeric and followed by exactly six digits."
+  }
+}
+
+Explanation:
+
+^[a-zA-Z0-9]+ → Allows any alphanumeric characters as subname
+
+_ → Requires an underscore after subname
+
+\d{6}$ → Ensures exactly six digits at the end
+
+The can(regex(...)) function validates the format and returns an error if it does not match.
+
+
+This will ensure that subname_123456 format is followed while allowing different alphanumeric values for subname.
+
