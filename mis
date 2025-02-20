@@ -205,3 +205,58 @@ variable "app_id" {
     error_message = "app_id must be provided if crownjewel is true."
   }
 }
+
+
+Terraform does not allow a variable's validation condition to reference other variables directly (like var.crownjewel). However, you can work around this limitation by using a precondition in a module or by handling validation in a separate resource.
+
+Solution 1: Use precondition in locals (Terraform 1.2+)
+
+If you're using Terraform 1.2 or later, you can use a precondition within locals:
+
+variable "crownjewel" {
+  description = "Flag to determine if app_id should be used"
+  type        = bool
+}
+
+variable "app_id" {
+  description = "Application ID"
+  type        = string
+  default     = null
+}
+
+locals {
+  selected_app_id = var.crownjewel ? var.app_id : null
+
+  # Validation using a precondition
+  validation_check = {
+    precondition = !(var.crownjewel && (var.app_id == null || var.app_id == ""))
+    error_message = "app_id must be provided when crownjewel is true."
+  }
+}
+
+
+---
+
+Solution 2: Validate using a Terraform null_resource
+
+If you're using an older Terraform version, you can use a null_resource with a lifecycle rule:
+
+resource "null_resource" "validate_app_id" {
+  count = var.crownjewel && (var.app_id == null || var.app_id == "") ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "echo 'Error: app_id must be provided when crownjewel is true.' && exit 1"
+  }
+}
+
+If crownjewel is true but app_id is missing, Terraform will fail during execution.
+
+
+---
+
+Solution 3: Handle in terraform.tfvars
+
+Instead of enforcing it in Terraform code, you can document it and handle it through input validation in CI/CD pipelines or manual checks.
+
+Would any of these approaches work for your case?
+
