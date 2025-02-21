@@ -416,3 +416,10 @@ Final Summary
 
 Would you like help troubleshooting your Terraform setup?
 
+
+
+
+precondition {
+  condition     = var.crownjewel ? (can(var.app_id) && can(regex("^[a-z0-9]+$", var.app_id))) : true
+  error_message = "app_id must contain only lowercase letters or numbers when crownjewel is true."
+}
