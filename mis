@@ -260,3 +260,108 @@ Instead of enforcing it in Terraform code, you can document it and handle it thr
 
 Would any of these approaches work for your case?
 
+
+
+You're right—the precondition inside locals won't work because Terraform's locals block does not support validation. Instead, you should use Terraform's built-in validation rules correctly.
+
+
+---
+
+Correct Approach: Using validation for app_id
+
+Since Terraform does not allow referencing other variables in a variable validation block, you cannot directly validate app_id based on crownjewel within variable blocks. However, you can enforce the check using a null_resource trick or precondition in a module (Terraform 1.2+).
+
+
+---
+
+Solution 1: null_resource for Validation
+
+This method forces Terraform to fail if crownjewel is true but app_id is missing.
+
+variable "crownjewel" {
+  description = "Flag to determine if app_id should be used"
+  type        = bool
+}
+
+variable "app_id" {
+  description = "Application ID"
+  type        = string
+  default     = null
+}
+
+# Validation using a null_resource
+resource "null_resource" "validate_app_id" {
+  count = var.crownjewel && (var.app_id == null || var.app_id == "") ? 1 : 0
+
+  provisioner "local-exec" {
+    command = "echo 'Error: app_id must be provided when crownjewel is true.' && exit 1"
+  }
+}
+
+How it works:
+
+If crownjewel is true and app_id is empty or null, Terraform fails with an error.
+
+Otherwise, Terraform proceeds normally.
+
+
+
+---
+
+Solution 2: precondition in a Module (Terraform 1.2+)
+
+If you're using Terraform 1.2 or later, you can enforce validation in a module's precondition block.
+
+module "app_config" {
+  source      = "./modules/app"
+  crownjewel  = var.crownjewel
+  app_id      = var.app_id
+
+  depends_on = [null_resource.validate_app_id]
+}
+
+locals {
+  selected_app_id = var.crownjewel ? var.app_id : null
+}
+
+output "app_id" {
+  value = local.selected_app_id
+  precondition {
+    condition     = !(var.crownjewel && (var.app_id == null || var.app_id == ""))
+    error_message = "app_id must be provided when crownjewel is true."
+  }
+}
+
+How it works:
+
+The precondition ensures app_id is mandatory when crownjewel is true.
+
+This method only works in Terraform 1.2+.
+
+
+
+---
+
+Solution 3: Document the Requirement & Handle in CI/CD
+
+If you can't use Terraform 1.2+ or don't want to use null_resource, you can document the requirement and enforce it in a CI/CD pipeline with a simple script:
+
+if [ "$TF_VAR_crownjewel" = "true" ] && [ -z "$TF_VAR_app_id" ]; then
+  echo "Error: app_id must be set when crownjewel is true."
+  exit 1
+fi
+
+
+---
+
+Conclusion
+
+✅ Terraform 1.2+? → Use precondition inside a module or output block.
+
+✅ Older Terraform? → Use a null_resource to enforce validation.
+
+✅ No code enforcement? → Handle validation in CI/CD pipelines.
+
+
+Would you like help structuring this inside a Terraform module?
+
