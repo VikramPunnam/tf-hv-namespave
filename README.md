@@ -1,7 +1,7 @@
 | Use Case | Description |                                                                                
 | --- | --- |
-| Vault Installation |	| Automate the installation of HashiCorp Vault on Linux servers using Ansible. This includes downloading and installing Vault via package managers or direct binaries and ensuring the Vault service is running.|
-| Vault Configuration |	| Automate the configuration of the Vault server through Ansible, including setting up listeners, storage backends (e.g., Raft), seal configurations, and authentication settings (e.g., TLS, API).|
+| Vault Installation | Automate the installation of HashiCorp Vault on Linux servers using Ansible. This includes downloading and installing Vault via package managers or direct binaries and ensuring the Vault service is running.|
+| Vault Configuration | Automate the configuration of the Vault server through Ansible, including setting up listeners, storage backends (e.g., Raft), seal configurations, and authentication settings (e.g., TLS, API).|
 | High Availability (HA) Setup | Automate the setup of a Vault HA cluster with a shared storage backend (e.g., Consul). Ansible ensures proper node configuration for leader election, data replication, and high availability. |
 | Cluster Initialization | Automate the initialization of Vault clusters using Ansible, which sets up the root token, enables the seal/unseal mechanism, and configures initial cluster settings. |
 | Join Servers to Cluster | Automate the process of adding new Vault nodes to an existing Vault cluster. Ansible configures the new node to join the cluster, syncs data and ensures consistency. |
