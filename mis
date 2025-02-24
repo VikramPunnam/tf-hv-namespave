@@ -448,3 +448,40 @@ precondition {
 | Vault Auto-Unseal with Venafi Certs and HSM    |	| Automate Vault's auto-unseal process using Venafi certificates for authentication and an HSM for key management. Ansible retrieves certificates from Venafi using its API, configures HSM to store keys securely, and updates the Vault configuration for auto-unsealing. After the configuration, Vault can automatically unseal itself using certificates stored in Venafi and cryptographic keys from the HSM during startup, eliminating the need for manual unsealing.                                                                                 |
 | PR/DR (Primary/Recovery) Configuration         |	| Automate the Primary/Recovery (PR/DR) configuration for Vault clusters. This involves setting up a primary Vault cluster and a recovery Vault cluster to handle disaster recovery. Ansible automates the replication of data, secrets, and configuration between the primary and recovery clusters. In the event of a failure or disaster, the recovery cluster takes over as the primary Vault instance, ensuring continued operation and minimal downtime. Ansible also handles failover and synchronization, ensuring smooth transition between clusters.|
 | Vault Log Rotation Configuration               |	| Automate the configuration of log rotation for Vault logs to manage log file sizes and prevent excessive disk usage. Ansible can be used to configure logrotate or other log management tools, ensuring logs are rotated, archived, and deleted according to specified retention policies. This includes setting up configuration files for rotating logs based on size or time, ensuring that old logs are compressed and stored safely, and that system performance is not affected by excessive log accumulation.                                        |
+
+
+
+Here’s a polished version of the email:
+
+
+---
+
+Subject: Update on Prisma API Keys Migration to Vault
+
+Hi Team,
+
+Here are the latest updates on the Prisma API keys migration to Vault:
+
+1. I’ve updated the pipeline.yaml configuration in Harness to fetch secrets directly from Vault without using native Harness secrets.
+
+
+2. Received the Python script from the Prisma team and integrated it into the pipeline.yaml file to generate secrets on the fly and pass them to the Python script. This has been tested successfully along with Babu from the Prisma team.
+
+
+3. Mohan and I joined a call with the Prisma team and provided a demo of the basic pipeline functionality, which meets the team’s requirements. The demo was presented to Taye, Jason Buck, and their team.
+
+
+4. During the call, we discussed multiple use cases, including Jenkins integration.
+
+
+
+Please let me know if you have any questions or need further details.
+
+Best regards,
+[Your Name]
+
+
+---
+
+Let me know if you’d like me to tweak or add anything!
+
