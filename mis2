@@ -1,0 +1,70 @@
+Sure — let’s structure this Jira ticket clearly and professionally. Here’s a well-organized draft:
+
+
+---
+
+Project: [CICD Team’s Jira Project]
+Issue Type: Task (or Story — depending on your team’s process)
+Summary: Setup CICD Pipeline for Sample Python Application with Container Image Build and OCP Deployment
+
+Description:
+We have a repository containing a sample Python application. The goal of this task is to understand the end-to-end CICD process — specifically focusing on:
+
+Building a container image for the application.
+
+Deploying the containerized application on the OpenShift Container Platform (OCP).
+
+
+Scope of Work:
+
+1. Container Image Build:
+
+Set up the pipeline to build a container image from the Python application repo.
+
+Ensure proper versioning and tagging of the image.
+
+Push the image to the appropriate container registry.
+
+
+
+2. Deployment to OCP:
+
+Create and configure necessary OCP resources (like Deployment, Service, Route).
+
+Deploy the containerized application on the OCP platform.
+
+Validate that the application is running and accessible.
+
+
+
+3. Documentation:
+
+Document the steps involved in setting up this pipeline.
+
+Outline any configurations, permissions, or tools required.
+
+
+
+
+Acceptance Criteria:
+
+A fully functioning CICD pipeline for container image build and OCP deployment.
+
+Successfully deployed Python application accessible via OCP route.
+
+Clear and comprehensive documentation provided.
+
+
+Repo: [Link to the Repository]
+
+Priority: Medium (or adjust based on your needs)
+
+Labels: CICD Containerization OCP PythonApp
+
+Assignee: [If there’s a specific person]
+
+
+---
+
+Let me know if you want me to tweak or add anything!
+
