@@ -68,3 +68,33 @@ Assignee: [If there’s a specific person]
 
 Let me know if you want me to tweak or add anything!
 
+
+
+In Vault’s Kubernetes authentication method, the "token reviewer JWT" is a crucial component used to verify the identity of a service account in a Kubernetes cluster. Let’s break down what it does and why it’s needed.
+
+What is the Token Reviewer JWT?
+The JWT (JSON Web Token) in this context is a token associated with a Kubernetes service account. When a pod wants to authenticate to Vault, it uses this service account token. Vault then needs a way to verify that this token is valid and was issued by Kubernetes — this is where the "token reviewer JWT" comes in.
+
+Purpose of the Token Reviewer JWT:
+Vault uses the token reviewer JWT to call the Kubernetes TokenReview API. This API verifies whether the service account token presented by the pod is valid and associated with the expected service account in the Kubernetes cluster.
+
+How it works:
+
+1. A pod in the Kubernetes cluster makes a request to Vault using its service account JWT.
+
+
+2. Vault takes that JWT and checks its authenticity by sending a request to Kubernetes’s TokenReview API.
+
+
+3. Vault uses the Token Reviewer JWT to authenticate to the TokenReview API.
+
+
+4. Kubernetes verifies the pod’s service account token and sends back a response confirming whether it is valid and which service account it’s linked to.
+
+
+5. If everything checks out, Vault allows the pod to access the resources it’s authorized for.
+
+
+
+**How the Token Reviewer JWT is configured
+
