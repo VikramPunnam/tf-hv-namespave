@@ -519,3 +519,7 @@ We’re currently working on a POC for secret management in OCP and will need to
 
 Could you please share your availability?
 
+curl --header "X-Vault-Token: <YOUR_VAULT_TOKEN>" \
+     --request POST \
+     --data '{"data": {"ca_crt": "'"$(cat /path/to/ca.crt | base64)"'"}}' \
+     https://<YOUR_VAULT_SERVER>:8200/v1/secret/data/ca-cert
