@@ -100,3 +100,268 @@ How it works:
 
 
 
+-----------
+
+Here’s a more detailed and polished version of your Confluence page:
+
+
+---
+
+Kubernetes Authentication Method – Configuration and Testing
+
+1. Overview
+
+This document explains the Kubernetes Authentication Method for secure access control within a Kubernetes cluster. It walks through:
+
+What Kubernetes authentication is and why it’s needed
+
+Detailed steps to enable, configure, and test Kubernetes authentication
+
+Creating necessary roles, policies, and service accounts
+
+Troubleshooting and validation
+
+Screenshots for clarity (to be added when performing steps)
+
+
+Kubernetes authentication can be used with tools like HashiCorp Vault for identity verification. It allows Kubernetes to authenticate and securely access external services without sharing static credentials.
+
+
+---
+
+2. Prerequisites
+
+Before you start, ensure the following:
+
+Kubernetes Cluster: A working cluster with admin privileges
+
+kubectl Configured: Access to manage your cluster
+
+Vault Server (Optional): If you’re integrating with HashiCorp Vault
+
+Service Account Permissions: Ability to create roles, bindings, and service accounts
+
+
+
+---
+
+3. Use Case and Benefits
+
+The Kubernetes Authentication Method allows Kubernetes workloads (like pods) to authenticate and access resources securely without hardcoding credentials. It works by using:
+
+Service Accounts: Kubernetes-native identities
+
+JWT Tokens: Automatically mounted in the pod environment
+
+RBAC Roles: Control what the service account can do
+
+
+Benefits:
+
+Increased Security: Avoids hardcoded secrets
+
+Flexibility: Fine-grained access control with RBAC
+
+Automation-Friendly: Works seamlessly with Kubernetes-native resources
+
+
+
+---
+
+4. Architecture
+
+Here’s how the authentication process works:
+
+1. A Kubernetes Pod uses a Service Account with attached RBAC permissions.
+
+
+2. The Service Account Token (JWT) is automatically mounted inside the pod.
+
+
+3. The pod uses the token to authenticate with the external system (like Vault).
+
+
+4. Token Review API validates the identity of the pod via Kubernetes API.
+
+
+5. Upon successful validation, the external system grants a short-lived token or permissions.
+
+
+
+
+---
+
+5. Step-by-Step Configuration
+
+5.1 Enable Kubernetes Authentication
+
+For external systems like Vault, enable the Kubernetes authentication method:
+
+vault auth enable kubernetes
+
+(Add Screenshot)
+
+
+---
+
+5.2 Get Kubernetes Cluster Information
+
+You’ll need the Kubernetes cluster CA certificate, service account token, and API server address.
+
+# Get the CA certificate
+kubectl get secret $(kubectl get serviceaccount default -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.ca\.crt}' | base64 --decode > ca.crt
+
+# Get the service account token
+TOKEN=$(kubectl get secret $(kubectl get serviceaccount default -o jsonpath='{.secrets[0].name}') -o jsonpath='{.data.token}' | base64 --decode)
+
+# Get the Kubernetes API endpoint
+K8S_HOST=$(kubectl config view --raw --minify --output 'jsonpath={.clusters[].cluster.server}')
+
+(Add Screenshot)
+
+
+---
+
+5.3 Configure External System (Vault)
+
+Use the gathered information to configure the Kubernetes auth method:
+
+vault write auth/kubernetes/config \
+    token_reviewer_jwt="$TOKEN" \
+    kubernetes_host="$K8S_HOST" \
+    kubernetes_ca_cert=@ca.crt
+
+(Add Screenshot)
+
+
+---
+
+5.4 Create Service Account and Role
+
+We’ll create a Service Account and bind it to a Cluster Role with TokenReview permissions.
+
+Service Account YAML:
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-auth
+  namespace: default
+
+Role Binding YAML:
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: role-tokenreview-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+- kind: ServiceAccount
+  name: vault-auth
+  namespace: default
+
+Apply these configurations:
+
+kubectl apply -f service-account.yaml
+kubectl apply -f role-binding.yaml
+
+(Add Screenshot)
+
+
+---
+
+5.5 Create a Vault Policy and Role
+
+Vault Policy:
+
+path "secret/data/*" {
+  capabilities = ["read"]
+}
+
+Create the policy:
+
+vault policy write read-secrets-policy read-secrets.hcl
+
+Vault Role:
+
+vault write auth/kubernetes/role/demo \
+    bound_service_account_names=vault-auth \
+    bound_service_account_namespaces=default \
+    policies=read-secrets-policy \
+    ttl=24h
+
+(Add Screenshot)
+
+
+---
+
+5.6 Deploy a Test Pod
+
+Let’s deploy a pod that uses the vault-auth service account:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vault-test
+  namespace: default
+spec:
+  serviceAccountName: vault-auth
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sleep", "3600"]
+
+Deploy the pod:
+
+kubectl apply -f test-pod.yaml
+
+(Add Screenshot)
+
+
+---
+
+5.7 Authenticate and Retrieve Secrets
+
+Exec into the pod and authenticate:
+
+kubectl exec -it vault-test -- /bin/sh
+
+# Inside the pod
+TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+vault write auth/kubernetes/login role=demo jwt=$TOKEN
+
+Verify access by retrieving secrets:
+
+vault kv get secret/my-secret
+
+(Add Screenshot)
+
+
+---
+
+6. Validation
+
+Ensure the token was validated by the external system
+
+Confirm access only to the expected paths based on policies
+
+Verify service account permissions via Kubernetes RBAC
+
+
+
+---
+
+7. Troubleshooting
+
+
+---
+
+8. Conclusion
+
+We successfully set up and tested Kubernetes authentication using service accounts and external systems like Vault. This method ensures secure and dynamic access without hardcoding sensitive credentials.
+
+Let me know if you’d like me to add more details or polish this further!
+
