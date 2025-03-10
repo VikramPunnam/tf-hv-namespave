@@ -89,3 +89,157 @@
 | MT-004            | Test Secret Expiry and Renewal for Multi-Tenant Setup | Ensure secret expiry and renewal are properly handled per tenant | 1. Configure secret TTL for each tenant’s secrets. <br> 2. Wait for the secret’s TTL to expire. <br> 3. Renew the secret and verify accessibility. | Expired secrets should become inaccessible, and renewed secrets should be accessible without issues. |
 | MT-005            | Monitor Access Logs for Multi-Tenant Secrets     | Ensure audit logs capture tenant-specific secret access events   | 1. Enable Vault audit logging. <br> 2. Access secrets from different tenant scopes. <br> 3. Review Vault audit logs. | Audit logs should clearly show tenant-specific access, including user identity and accessed secrets. |
 
+
+
+
+
+
+..........
+
+Here’s a clean and detailed README.md for setting up a Harness connector for HashiCorp Vault:
+
+# Harness Connector for HashiCorp Vault
+
+This repository provides instructions and configuration for creating a Harness connector to integrate with HashiCorp Vault. This allows Harness to securely retrieve secrets stored in your Vault for use in deployments and pipelines.
+
+## Prerequisites
+
+Before setting up the connector, ensure you have the following:
+- Access to a HashiCorp Vault instance.
+- A Vault role with permissions to read secrets.
+- Vault server URL and authentication credentials (Token, AppRole, or Kubernetes Auth).
+- Access to a Harness account with permissions to create secrets managers.
+
+## 1. Configure HashiCorp Vault
+
+1. **Enable AppRole Authentication (if using AppRole)**:
+```bash
+vault auth enable approle
+
+2. Create a Policy with Read Access to Secrets:
+
+
+
+# policy.hcl
+path "secret/data/*" {
+  capabilities = ["read"]
+}
+
+3. Apply the Policy:
+
+
+
+vault policy write harness-policy policy.hcl
+
+4. Create an AppRole:
+
+
+
+vault write auth/approle/role/harness-role \
+  token_policies="harness-policy" \
+  secret_id_ttl=0 \
+  token_num_uses=0 \
+  token_ttl=20m \
+  token_max_ttl=30m
+
+5. Fetch the Role ID and Secret ID:
+
+
+
+vault read auth/approle/role/harness-role/role-id
+vault write -f auth/approle/role/harness-role/secret-id
+
+
+---
+
+2. Create the Harness Connector
+
+1. Navigate to Harness: Go to your Harness account and select your project or organization.
+
+
+2. Create a New Connector:
+
+Go to Connectors and click + New Connector.
+
+Choose Secret Manager and then select HashiCorp Vault.
+
+
+
+3. Configure Vault Details:
+
+Vault URL: https://<your-vault-server>:8200
+
+Authentication Method: Choose one of the following:
+
+Token: Provide the Vault token.
+
+AppRole: Enter the Role ID and Secret ID created earlier.
+
+Kubernetes Auth: Provide the necessary Kubernetes token and configuration.
+
+
+Secret Engine Version: Choose KV Version 1 or KV Version 2 depending on your Vault setup.
+
+Secret Engine Path: The base path where secrets are stored (e.g., secret/).
+
+Namespace (if using Enterprise): Enter the Vault namespace if applicable.
+
+
+
+4. Test and Save the Connector:
+
+Click Test Connection to verify the setup.
+
+If successful, click Save.
+
+
+
+
+
+---
+
+3. Accessing Secrets in Harness
+
+Once the connector is set up, you can use secrets from Vault in your pipelines and deployments:
+
+1. Create a Secret:
+
+Go to Secrets and click + New Secret.
+
+Choose Secret Manager and select the HashiCorp Vault connector.
+
+Provide the path to the secret in Vault (e.g., secret/data/my-secret).
+
+
+
+2. Reference the Secret: Use the secret in your pipeline by referencing it like:
+
+
+
+environmentVariables:
+  MY_SECRET: <+secrets.getValue("my-vault-secret")>
+
+
+---
+
+4. Troubleshooting
+
+"Permission Denied" Errors: Ensure the Vault policy grants read access to the path.
+
+"Invalid Path" Errors: Confirm the secret engine path and version.
+
+Connection Failures: Check Vault URL, network access, and authentication method.
+
+
+
+---
+
+5. Resources
+
+Harness Documentation
+
+HashiCorp Vault Documentation
+
+
+Let me know if you’d like me to refine or add anything!
+
