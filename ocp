@@ -1,0 +1,100 @@
+Got it! Let’s refine this and get it working. Since you want to use Vault CSI driver with templates and set environment variables directly from the pod, here’s the clean and final setup:
+
+SecretProviderClass (with Vault Agent templates):
+
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: vault-secret-provider
+spec:
+  provider: vault
+  parameters:
+    roleName: "my-app-role"
+    vaultAddress: "https://vault.example.com"
+    secrets: |
+      - path: secret/data/my-app
+        format: json
+    templates: |
+      {{- with secret "secret/data/my-app" -}}
+      export API_KEY="{{ .Data.data.apiKey }}"
+      export DB_PASSWORD="{{ .Data.data.dbPassword }}"
+      {{- end }}
+
+Deployment Config:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      serviceAccountName: my-app-sa
+      containers:
+        - name: my-container
+          image: my-app-image:latest
+          volumeMounts:
+            - name: vault-secrets
+              mountPath: /vault/secrets
+              readOnly: true
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Source the Vault-generated env file
+              if [ -f /vault/secrets/env ]; then
+                . /vault/secrets/env
+              fi
+              exec my-app-binary
+      volumes:
+        - name: vault-secrets
+          csi:
+            driver: secrets.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "vault-secret-provider"
+
+How this works:
+
+1. Vault CSI driver mounts the secret as a file using the custom template.
+
+
+2. The template writes an env-style file with export VAR="value".
+
+
+3. The pod’s args sources the file (. /vault/secrets/env) — setting those environment variables directly.
+
+
+4. exec my-app-binary runs your app with secrets injected.
+
+
+
+Why this is perfect for your setup:
+
+No native Kubernetes secrets.
+
+Environment variables only.
+
+No jq, awk, or JSON parsing.
+
+Uses Vault templates directly via CSI.
+
+
+Make sure your SecretProviderClass writes the env-style file:
+After pod deployment, check the mounted file:
+
+cat /vault/secrets/env
+
+It should look like:
+
+export API_KEY="abc123"
+export DB_PASSWORD="secret123"
+
+Let me know if this works or if anything needs tweaking!
+
