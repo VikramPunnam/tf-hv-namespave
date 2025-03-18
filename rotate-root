@@ -70,3 +70,25 @@ Details on Application.ReadWrite.OwnedBy and its scope.
 
 
 
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: vault-secret-provider
+spec:
+  provider: vault
+  parameters:
+    vaultAddress: "https://vault.example.com"
+    roleName: "my-role"
+    vaultKubernetesMountPath: "kubernetes"
+    objects: |
+      - objectName: "envfile"
+        secretPath: "secret/data/my-app"
+        secretKey: ""
+        fileName: "envfile"
+        format: template
+        template: |
+          {{- with secret "secret/data/my-app" -}}
+          {{- range $k, $v := .Data.data }}
+          {{ $k }}={{ $v }}
+          {{ end -}}
+          {{- end }}
