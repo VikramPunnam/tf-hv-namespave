@@ -365,3 +365,156 @@ We successfully set up and tested Kubernetes authentication using service accoun
 
 Let me know if you’d like me to add more details or polish this further!
 
+
+
+Here’s a complete set of YAML configuration files to deploy PostgreSQL on OpenShift using emptyDir for ephemeral storage. This setup includes:
+
+1. Deployment – Runs PostgreSQL in a pod.
+
+
+2. Service – Exposes PostgreSQL internally in the cluster.
+
+
+3. ConfigMap – Stores environment variables like database name and user.
+
+
+4. Secret – Stores the PostgreSQL password securely.
+
+
+
+
+---
+
+1. Secret (postgres-secret.yaml)
+
+Stores the PostgreSQL password securely.
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-secret
+type: Opaque
+data:
+  POSTGRES_PASSWORD: cG9zdGdyZXM=  # Base64 encoded "postgres"
+
+To encode a password, use:
+
+echo -n "postgres" | base64
+
+
+---
+
+2. ConfigMap (postgres-config.yaml)
+
+Stores database name and user.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_DB: testdb
+  POSTGRES_USER: postgres
+
+
+---
+
+3. Deployment (postgres-deployment.yaml)
+
+Defines the PostgreSQL pod and mounts emptyDir for temporary storage.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        fsGroup: 26  # Ensures correct permissions for OpenShift
+      containers:
+        - name: postgres
+          image: postgres:15  # Change version as needed
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data  # Mounted as an emptyDir
+      volumes:
+        - name: postgres-data
+          emptyDir: {}  # Non-persistent storage
+
+
+---
+
+4. Service (postgres-service.yaml)
+
+Exposes PostgreSQL within the cluster.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+
+
+---
+
+Deploy PostgreSQL in OpenShift
+
+Apply all configs:
+
+kubectl apply -f postgres-secret.yaml
+kubectl apply -f postgres-config.yaml
+kubectl apply -f postgres-deployment.yaml
+kubectl apply -f postgres-service.yaml
+
+Check if the pod is running:
+
+kubectl get pods
+
+
+---
+
+Access PostgreSQL
+
+Once the pod is running, exec into it:
+
+kubectl exec -it $(kubectl get pod -l app=postgres -o jsonpath="{.items[0].metadata.name}") -- bash
+
+Inside the pod, connect to PostgreSQL:
+
+psql -U postgres -d testdb
+
+
+---
+
+Cleanup
+
+If you’re done testing and want to remove everything:
+
+kubectl delete deployment postgres
+kubectl delete service postgres
+kubectl delete configmap postgres-config
+kubectl delete secret postgres-secret
+
+Let me know if you need any modifications!
+
