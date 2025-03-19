@@ -142,3 +142,42 @@ spec:
             readOnly: true
             volumeAttributes:
               secretProviderClass: "vault-secret-provider"
+
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: my-app:latest
+        env:
+          - name: SECRET
+            value: "/vault/filename"
+        volumeMounts:
+          - name: vault-secret
+            mountPath: "/vault"
+            readOnly: true
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            export MY_SECRET=$(cat "$SECRET")
+            exec /app/start.sh
+      volumes:
+        - name: vault-secret
+          csi:
+            driver: "secrets-store.csi.k8s.io"
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "vault-secret-provider"
