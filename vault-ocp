@@ -163,3 +163,30 @@ This migration represents a critical step toward modernizing infrastructure, enh
 
 Let me know if you’d like me to expand on any specific area or add further technical deep dives.
 
+
+command: ["/bin/sh", "-c"]
+args:
+  - |
+    echo "Waiting for secret file: $SECRET"
+    timeout=30  # Max wait time
+    interval=2  # Check interval
+    elapsed=0
+
+    while [ ! -f "$SECRET" ]; do
+      if [ "$elapsed" -ge "$timeout" ]; then
+        echo "Error: Secret file $SECRET not found after $timeout seconds" >&2
+        exit 1
+      fi
+      echo "Secret file not found, retrying in $interval seconds..."
+      sleep "$interval"
+      elapsed=$((elapsed + interval))
+    done
+
+    echo "Secret file found. Setting environment variable..."
+    export MY_SECRET="$(cat "$SECRET")"
+
+    echo "MY_SECRET is now set to: $MY_SECRET"  # Debugging line
+
+    exec env  # Print all environment variables to verify MY_SECRET
+
+    exec /app/start.sh
