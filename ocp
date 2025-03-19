@@ -181,3 +181,5 @@ spec:
             readOnly: true
             volumeAttributes:
               secretProviderClass: "vault-secret-provider"
+
+
