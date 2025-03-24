@@ -464,3 +464,5 @@ variable "vault_namespace" {
     error_message = "The vault_namespace must be a non-empty string containing only lowercase letters, hyphens (-), and forward slashes (/). It cannot contain numbers, uppercase letters, consecutive hyphens/slashes, or start/end with a hyphen/slash."
   }
 }
+
+
