@@ -384,3 +384,74 @@ locals {
     "default-namespace"
   )
 }
+
+
+
+
+If hyphens (-) are allowed in the namespace but must follow these rules:
+
+Only lowercase letters and hyphens (-) or forward slashes (/)
+
+No uppercase letters or numbers
+
+Cannot end with a hyphen (-) or a slash (/)
+
+No consecutive hyphens (--) or slashes (//)
+
+
+Terraform Variable Definition
+
+variable "vault_namespace" {
+  description = "Vault namespace path. Must contain only lowercase letters, hyphens (-), and forward slashes (/). Cannot contain numbers, uppercase letters, consecutive hyphens/slashes, or end with a hyphen/slash."
+  type        = string
+
+  validation {
+    condition     = can(regex("^(?!.*--)(?!.*//)[a-z]+(?:[-/][a-z]+)*$", var.vault_namespace))
+    error_message = "The vault_namespace must contain only lowercase letters, hyphens (-), and forward slashes (/). It cannot contain numbers, uppercase letters, consecutive hyphens/slashes, or end with a hyphen/slash."
+  }
+}
+
+
+---
+
+Explanation of the Regex (^(?!.*--)(?!.*//)[a-z]+(?:[-/][a-z]+)*$)
+
+1. ^(?!.*--) → Disallows consecutive hyphens (--).
+
+
+2. (?!.*//) → Disallows consecutive slashes (//).
+
+
+3. [a-z]+ → First segment must start with lowercase letters.
+
+
+4. (?:[-/][a-z]+)* → Allows additional segments separated by either a hyphen (-) or a slash (/), ensuring each segment contains only lowercase letters.
+
+
+5. $ → Ensures the string does not end with a hyphen (-) or a slash (/).
+
+
+
+
+---
+
+Valid Examples
+
+✔ namespace
+✔ namespace/path
+✔ name-space/path
+✔ name-space/sub-namespace/path
+
+Invalid Examples
+
+❌ Namespace → (Contains uppercase)
+❌ namespace1 → (Contains a number)
+❌ namespace/ → (Ends with a /)
+❌ namespace/path1 → (Contains a number)
+❌ namespace--path → (Contains consecutive --)
+❌ namespace//path → (Contains consecutive //)
+❌ -namespace/path → (Starts with -, which is not allowed)
+❌ namespace/path- → (Ends with -, which is not allowed)
+
+Would you like any further refinements?
+
