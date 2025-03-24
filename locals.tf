@@ -455,3 +455,12 @@ Invalid Examples
 
 Would you like any further refinements?
 
+variable "vault_namespace" {
+  description = "Vault namespace path. Must contain only lowercase letters, hyphens (-), and forward slashes (/). Cannot be empty, contain numbers or uppercase letters, have consecutive hyphens/slashes, or start/end with a hyphen/slash."
+  type        = string
+
+  validation {
+    condition     = var.vault_namespace != "" && can(regex("^(?!.*--)(?!.*//)(?![-/])[a-z]+(?:[-/][a-z]+)*$", var.vault_namespace))
+    error_message = "The vault_namespace must be a non-empty string containing only lowercase letters, hyphens (-), and forward slashes (/). It cannot contain numbers, uppercase letters, consecutive hyphens/slashes, or start/end with a hyphen/slash."
+  }
+}
