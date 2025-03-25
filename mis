@@ -523,3 +523,22 @@ curl --header "X-Vault-Token: <YOUR_VAULT_TOKEN>" \
      --request POST \
      --data '{"data": {"ca_crt": "'"$(cat /path/to/ca.crt | base64)"'"}}' \
      https://<YOUR_VAULT_SERVER>:8200/v1/secret/data/ca-cert
+
+
+
+Subject: Clarification on Service Account Token Creation for Vault CSI Provider
+
+Dear HashiCorp Support Team,
+
+We have observed that when deploying the Vault CSI Provider using the Helm chart, a Kubernetes service account is created, but a corresponding service account token is not automatically generated.
+
+To work around this, we manually created a service account token by generating a Kubernetes secret of type token. This token (token_reviewer_jwt) is then used to configure the Vault Kubernetes authentication method.
+
+Could you please confirm if it is the user's responsibility to create and manage the service account tokens in this case?
+
+Looking forward to your guidance.
+
+Best regards,
+[Your Name]
+[Your Organization]
+
