@@ -644,3 +644,12 @@ Potential Security Issues: Misinterpreted secrets could cause unexpected applica
 
 By ensuring correct escaping, Vault users can avoid these common pitfalls and maintain consistency in stored secrets.
 
+
+
+Hello,
+
+Just an FYI:
+We encountered an issue today related to special characters in strings when storing them in Vault. The issue has been resolved.
+
+I have documented the issue and its resolution in our HEHV Vault known issues.
+
