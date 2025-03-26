@@ -567,3 +567,80 @@ Example (JSON Format)
 
 By following this approach, Vault correctly interprets and retrieves the stored string value.
 
+
+
+Known Issue: Escaping Special Characters in Vault Key-Value Strings
+
+Problem
+
+When storing key-value pairs in Vault, values that contain special characters (such as spaces, quotes, or escape sequences) may not be processed correctly. This can lead to unexpected behavior, such as:
+
+Vault failing to parse the JSON payload correctly.
+
+The application retrieving improperly formatted values.
+
+Issues with consuming the values in scripts or environment variables.
+
+
+To avoid these issues, special characters must be properly escaped within the Vault key-value store.
+
+Root Cause
+
+Vault expects JSON-formatted data when storing secrets, and JSON requires that string values be enclosed in double quotes (" "). If a value itself contains double quotes, they must be escaped properly to ensure correct interpretation by both Vault and any applications retrieving the secret.
+
+Resolution
+
+To correctly store a string value that includes special characters, follow these steps:
+
+1. Enclose the value in escaped double quotes (\" at the beginning and \" at the end).
+
+
+2. Ensure the JSON payload follows Vault's expected format.
+
+
+
+Example (Correct JSON Format for Vault)
+
+{
+  "Key": "\"value\""
+}
+
+In this example:
+
+The actual stored value will be "value", including the double quotes around value.
+
+This ensures that Vault correctly interprets and retrieves the value without errors.
+
+
+Example: Writing the Secret to Vault Using cURL
+
+When writing this key-value pair to Vault via the CLI or API, the escaping must be maintained:
+
+curl --header "X-Vault-Token: <TOKEN>" \
+     --request POST \
+     --data '{"data": {"Key": "\"value\""}}' \
+     http://<VAULT_ADDRESS>/v1/secret/data/myapp
+
+Example: Retrieving the Secret from Vault
+
+After storing the secret, retrieving it using vault kv get or curl will return the properly formatted output:
+
+{
+  "data": {
+    "data": {
+      "Key": "\"value\""
+    }
+  }
+}
+
+Impact if Not Escaped Properly
+
+Incorrect Parsing: Vault may not correctly interpret the value, leading to errors when storing or retrieving the secret.
+
+Unexpected Behavior in Applications: If an application reads an improperly formatted string, it may fail to process it correctly.
+
+Potential Security Issues: Misinterpreted secrets could cause unexpected application failures or incorrect authentication behavior.
+
+
+By ensuring correct escaping, Vault users can avoid these common pitfalls and maintain consistency in stored secrets.
+
