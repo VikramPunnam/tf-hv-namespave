@@ -542,3 +542,28 @@ Best regards,
 [Your Name]
 [Your Organization]
 
+
+
+Known Issue: Escaping Special Characters in Vault Key-Value Strings
+
+Problem
+
+When storing key-value pairs in Vault, special characters in string values may cause parsing issues. This can lead to incorrect data interpretation or retrieval errors.
+
+Resolution
+
+To properly escape special characters in a Vault key-value string, enclose the value in escaped double quotes. Specifically:
+
+Add \" at the beginning of the string.
+
+Add \" at the end of the string.
+
+
+Example (JSON Format)
+
+{
+  "Key": "\"value\""
+}
+
+By following this approach, Vault correctly interprets and retrieves the stored string value.
+
