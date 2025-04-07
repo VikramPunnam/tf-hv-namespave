@@ -12,3 +12,9 @@ Upon logging into Vault, you will be prompted with the necessary commands. Pleas
 
 Let me know if you'd like it to be more formal or casual.
 
+
+
+Certainly! Here's a more professional rephrasing:
+
+"There are no issues with using the Vault UI; however, it is recommended to use curl for updating or patching secrets. This approach ensures that the individual making the changes has direct control over the specific secret being modified, without affecting other secrets within the same Vault path. This helps minimize the risk of human error."
+
