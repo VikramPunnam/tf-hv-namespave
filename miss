@@ -18,3 +18,15 @@ Certainly! Here's a more professional rephrasing:
 
 "There are no issues with using the Vault UI; however, it is recommended to use curl for updating or patching secrets. This approach ensures that the individual making the changes has direct control over the specific secret being modified, without affecting other secrets within the same Vault path. This helps minimize the risk of human error."
 
+You can suggest the team to implement hashing for their secrets as a best practice to ensure data integrity and detect any unauthorized modifications. Here's a detailed paragraph you can use:
+
+
+---
+
+To enhance the security and integrity of your secrets, I recommend implementing a hashing mechanism before storing or transmitting them. By generating a cryptographic hash (e.g., using SHA-256) of the original secret and storing it alongside the secret itself—or in a secure location—you can later recompute the hash and compare it to the original value to verify that the secret has not been tampered with. This is particularly useful when secrets are passed through multiple systems or stored in environments where integrity cannot be implicitly trusted. Integrating this as part of your CI/CD pipeline or automation scripts can ensure that any corruption or unauthorized changes to the secrets are immediately detected. This method doesn’t encrypt or hide the secret but provides a reliable way to confirm its authenticity and integrity.
+
+
+---
+
+Let me know if you want a more formal or more technical version as well.
+
