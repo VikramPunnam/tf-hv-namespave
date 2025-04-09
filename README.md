@@ -243,3 +243,68 @@ HashiCorp Vault Documentation
 
 Let me know if you’d like me to refine or add anything!
 
+
+
+Here's a high-level comparison between the Vault CSI provider and the Vault Injector:
+
+Sure! Here's the comparison in a simple README-style format:
+
+
+---
+
+Vault CSI Provider vs Vault Agent Injector
+
+This table provides a high-level comparison between using the Vault CSI Provider and the Vault Agent Injector for injecting secrets into Kubernetes pods.
+
+
+---
+
+Let me know if you want this tailored for a specific use case or platform like OpenShift.
+
+On some platforms (especially mobile apps), table formatting using Markdown might not render as a true table you can easily copy. Instead, it shows up as plain text with pipes (|) and dashes (-), which isn't selectable as a table.
+
+Here’s an alternative version using simple text formatting that should be easier to copy from:
+
+
+---
+
+Vault CSI Provider vs Vault Agent Injector
+
+1. Secret Injection Method
+
+CSI Provider: Mounts secrets as files via CSI volume
+
+Agent Injector: Injects secrets as environment variables or files
+
+
+
+2. Dependency
+
+CSI Provider: Uses CSI driver, no sidecar container needed
+
+Agent Injector: Requires Vault Agent sidecar per pod
+
+
+
+3. Update Mechanism
+
+CSI Provider: Supports secret refresh via file rotation
+
+Agent Injector: Supports auto-renewal and re-authentication
+
+
+
+4. Resource Overhead
+
+CSI Provider: Lower (no extra container per pod)
+
+Agent Injector: Higher (runs a Vault Agent sidecar per pod)
+
+
+
+
+
+---
+
+Let me know if you want this in a downloadable format (like a .md file).
+
