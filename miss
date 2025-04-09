@@ -45,3 +45,5 @@ Thank you for your understanding and cooperation.
 
 Let me know if you'd like a more casual or more formal tone.
 
+Storing secrets in etcd poses a risk because they can be exposed if etcd is compromised, as it stores data in plaintext unless explicitly encrypted.
+
