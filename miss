@@ -47,3 +47,17 @@ Let me know if you'd like a more casual or more formal tone.
 
 Storing secrets in etcd poses a risk because they can be exposed if etcd is compromised, as it stores data in plaintext unless explicitly encrypted.
 
+Here’s a refined version of your problem statement:
+
+
+---
+
+Current Problem Statement:
+
+At present, secret injection is handled through Harness, which connects to Vault via a Harness connector and injects secrets into Kubernetes ConfigMaps or Secrets. This approach introduces a dependency on Harness for secret management. With the new Vault sidecar injector approach, we aim to completely eliminate the Harness dependency by injecting secrets directly into the application container, enhancing security and simplifying the deployment workflow.
+
+
+---
+
+Let me know if you'd like it more concise or adapted for a specific audience (e.g., engineering, management, documentation).
+
