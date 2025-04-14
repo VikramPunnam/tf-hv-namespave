@@ -655,3 +655,6 @@ I have documented the issue and its resolution in our HEHV Vault known issues.
 
 I got online, and by the time I logged in, the Vault server had unsealed itself without any action on my part. Shortly after I checked, I received this email confirming that the alert status was clear.
 
+
+
+kubectl get configmap kube-root-ca.crt -n default -o jsonpath="{.data.ca\.crt}" > ca.crt
