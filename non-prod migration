@@ -305,3 +305,8 @@ Post-Migration Tasks
 
 Let me know if you'd like a downloadable version (Markdown, Word, or PDF),
 
+kv/nonprod/*
+secret/devops/*
+transit/dev-team/*
+auth/ldap-nonprod
+identity/group/nonprod-team me 
