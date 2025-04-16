@@ -1,0 +1,140 @@
+Here's a detailed explanation you can use to update your Confluence page, describing how to selectively migrate secrets and applications from one Vault Enterprise cluster to another using Performance Replication, along with an explanation of why this cannot be done using Terraform.
+
+
+---
+
+Vault Enterprise: Selective Data Migration Using Performance Replication
+
+Background
+
+When managing large-scale secrets infrastructure in HashiCorp Vault Enterprise, there may arise a need to migrate specific secrets, applications, or organizational units (e.g., team-specific paths or secret engines) from one Vault cluster to another. This is often required during:
+
+Organizational restructuring
+
+Cluster lifecycle upgrades
+
+Regional/zone-level workload isolation
+
+Cloud platform migration
+
+Security boundary enforcement
+
+
+Vault Enterprise provides a native and secure way to facilitate such migrations via Performance Replication with Mount Filters.
+
+
+---
+
+Why Terraform Cannot Be Used for Vault Data Migration
+
+While Terraform is often used to manage Vault configuration (such as enabling auth methods, defining policies, creating secret engines, etc.), it is not suitable for migrating existing Vault data, for several reasons:
+
+Terraform is declarative: It manages resources based on a desired state and does not dynamically discover or transfer existing secrets from one cluster to another.
+
+Terraform is not designed for data export/import: It cannot recursively read, store, and replay secrets from one Vault to another.
+
+Handling of sensitive data: Secret values read during a Terraform plan/apply cycle may be exposed in state files, violating best practices around secret management.
+
+No built-in support for identity or lease migration: Entities, groups, leases, tokens, and their metadata are not handled by the Vault Terraform provider.
+
+
+As a result, Terraform is best used for infrastructure as code within a single Vault cluster but not for cross-cluster data migrations.
+
+
+---
+
+Recommended Approach: Vault Enterprise Performance Replication
+
+Vault Enterprise offers Performance Replication, which enables real-time or near-real-time replication of secrets from a primary cluster to one or more secondary clusters. When combined with mount filters, this feature can be used to replicate only specific parts of the Vault data.
+
+Key Features of Performance Replication
+
+Replicates KV secrets, database credentials, transit keys, and other secret engine data.
+
+Replicates authentication methods and identity groups if configured within included mounts.
+
+Supports multiple secondaries, allowing for a multi-cluster topology.
+
+Allows filtered, selective replication, perfect for partial migrations.
+
+
+
+---
+
+Selective Migration via Mount Filters
+
+Instead of replicating the entire Vault cluster (as DR Replication does), mount filters allow the administrator to specify exact paths or secret engines to include in the replication process. This enables precise, controlled migration of only the required data and applications.
+
+For example, consider the following filtered mounts:
+
+secret/team-a/*: Secrets for Team A
+
+kv/app-123/*: Secrets related to application 123
+
+transit/team-x: A dedicated transit engine for Team X
+
+
+By applying these filters, only these specified mounts will be replicated to the secondary Vault cluster.
+
+
+---
+
+How the Process Works (High-Level)
+
+1. Performance Replication is enabled on the primary Vault cluster.
+
+
+2. A secondary token is generated to allow the target Vault cluster to securely connect to the primary.
+
+
+3. The target Vault cluster is configured as a secondary using the token and address of the primary.
+
+
+4. A list of allowed mounts is defined via mount filters on the primary Vault, ensuring only specific paths are eligible for replication.
+
+
+5. The secondary Vault begins replicating only the allowed mounts.
+
+
+6. Once the data is fully synced, the secondary can optionally be promoted to operate independently as a standalone Vault cluster.
+
+
+
+
+---
+
+Benefits of This Approach
+
+Granular migration: Only the required teams or applications are migrated.
+
+Minimal disruption: Both Vault clusters remain operational during the migration.
+
+Scalable: Multiple teams or business units can be migrated in phases.
+
+Secure and supported: Uses built-in Vault Enterprise capabilities, with full support from HashiCorp.
+
+
+
+---
+
+Post-Migration Actions (Optional)
+
+After verification and validation, the secondary Vault can be promoted to an independent cluster.
+
+Applications can be pointed to the new Vault endpoint.
+
+Old data or access on the original cluster can be retired in a controlled manner.
+
+
+
+---
+
+Conclusion
+
+Vault Enterprise’s Performance Replication with mount filtering offers a secure, scalable, and operationally efficient way to migrate selected portions of Vault data to a new cluster. This approach avoids the risks and limitations of manual scripting or Terraform-based workarounds and ensures data consistency and compliance throughout the migration process.
+
+
+---
+
+Let me know if you'd like this formatted in a Confluence markup style or copied into a Confluence template. I can also help generate a sample mount path list for your teams.
+
