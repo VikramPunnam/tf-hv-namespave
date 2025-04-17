@@ -10,3 +10,9 @@ As this appears to be a break/fix situation, please log an incident ticket with 
 
 Let me know if you'd like a more formal, casual, or concise tone.
 
+Sure, here's the revised version with that phrasing:
+
+"Verified that the Luna client is installed on all non-production servers, and the specified directory is present on each of them.
+
+It was observed that the 'hehv' user is absent on all non-production servers except the one highlighted below."
+
