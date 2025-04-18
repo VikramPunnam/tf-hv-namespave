@@ -74,3 +74,47 @@ Together, they enable modern, scalable, and portable applications
 
 Ideal for microservices, CI/CD, and hybrid cloud strategies
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Slide 1: Containerization and Kubernetes
+🗣️ “Hi everyone! Thanks for joining. Today we’re diving into two key technologies that are revolutionizing how modern applications are built and deployed: Containerization and Kubernetes. These are essential tools for DevOps, microservices, and cloud-native development. Let's get started.”
+
+Slide 2: What is Containerization?
+🗣️ “Imagine you're a developer. You’ve written your app, and it runs great on your machine—but when you deploy it, things break. Sound familiar? That’s where containers come in. They package your app with all its dependencies so it runs the same anywhere—laptop, cloud, or production. It’s like shipping your code in a sealed box that always works, regardless of the environment. Tools like Docker make this super easy.”
+
+Slide 3: Introduction to Kubernetes
+🗣️ “Now containers are great—but what happens when you have hundreds of them running in production? Who starts them? Who restarts them if they crash? Who makes sure traffic is balanced? That’s where Kubernetes comes in. It’s like the brains behind your container infrastructure—it manages, scales, heals, and orchestrates everything so you don’t have to babysit containers manually.”
+
+Slide 4: How Kubernetes and Containers Work Together
+🗣️ “So how do they fit together? Think of containers as your apps—and Kubernetes as the manager. You give Kubernetes a desired state: ‘I want 3 copies of this app running.’ It makes it happen—and keeps it that way. It uses things like Pods, Nodes, and the Control Plane to do this. If one container crashes, Kubernetes restarts it. If traffic increases, Kubernetes can spin up more automatically.”
+
+Slide 5: Architecture Overview (Use a visual here)
+🗣️ “Let’s visualize this. At the top, we have the Control Plane, which makes all the decisions—like a conductor in an orchestra. Below it are Nodes—these are the machines where your app actually runs. Inside each node, you have Pods, and each Pod contains one or more containers. It’s a simple but powerful structure that can scale up to thousands of containers, all working together.”
+
+Slide 6: Benefits of Kubernetes & Containerization
+🗣️ “Why is everyone using this combo? A few reasons: it's fast, scalable, and resilient. Kubernetes helps with things like auto-scaling, self-healing, and rolling updates—so your app can grow, recover from failures, and update with no downtime. It also plays well with CI/CD and is a dream setup for microservices.”
+
+Slide 7: Containerization vs Virtualization
+🗣️ “Now let’s compare it to traditional virtualization. Containers are lightweight—they share the host OS and start in seconds. VMs are heavier—they run a full OS and take more resources. But both have their place. VMs are great for full isolation and legacy apps. Containers are ideal for modern, modular apps and fast-moving teams.”
+
+Slide 8: Summary
+🗣️ “To wrap up: Containers help you package and ship apps consistently. Kubernetes helps you run and manage them reliably at scale. Together, they’ve transformed software delivery. If you’re building for the cloud, doing DevOps, or planning microservices—this is the foundation to know.”
+
