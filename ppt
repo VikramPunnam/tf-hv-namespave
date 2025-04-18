@@ -1,0 +1,76 @@
+Slide 1: Title Slide
+Title: Containerization and Kubernetes
+Subtitle: Modern Infrastructure for Scalable Applications
+Presented by: [Your Name]
+Date: [Insert Date]
+
+Slide 2: What is Containerization?
+Packages apps with all dependencies
+
+Consistent across different environments
+
+Fast, lightweight, and isolated
+
+Common tools: Docker, Podman
+
+Slide 3: Introduction to Kubernetes
+Open-source container orchestration tool
+
+Automates deployment, scaling, and management
+
+Works across clusters of physical or virtual machines
+
+Supports various container runtimes (Docker, containerd)
+
+Slide 4: How Kubernetes and Containers Work Together
+Containers: Run application workloads
+
+Kubernetes:
+
+Deploys and scales containers
+
+Monitors health and maintains state
+
+Provides networking, discovery, and load balancing
+
+Key components:
+
+Pod, Node, Control Plane, Kubelet
+
+Slide 5: Architecture Overview (Visual Slide)
+(Use a diagram here with Control Plane connected to Node 1 and Node 2. Each node contains Pods.)
+
+Control Plane: Manages cluster state
+
+Nodes: Run app workloads (pods)
+
+Pods: Smallest unit of deployment
+
+Slide 6: Benefits of Kubernetes & Containerization
+Automated scaling and self-healing
+
+Rolling updates with no downtime
+
+Resource-efficient and cost-effective
+
+Microservices and CI/CD friendly
+
+Cloud-native and portable
+
+Slide 7: Containerization vs Virtualization
+
+Feature	Containerization	Virtualization
+OS Kernel	Shared with host	Full OS per VM
+Startup Time	Seconds	Minutes
+Resource Usage	Lightweight	Heavier
+Use Case	Microservices, DevOps	Legacy apps, full isolation
+Examples	Docker, Podman	VMware, VirtualBox
+Slide 8: Summary
+Containers simplify deployment and boost agility
+
+Kubernetes orchestrates and manages containers at scale
+
+Together, they enable modern, scalable, and portable applications
+
+Ideal for microservices, CI/CD, and hybrid cloud strategies
+
