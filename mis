@@ -664,3 +664,4 @@ Successfully completed a Proof of Concept (PoC) to integrate HashiCorp Vault wit
 
 Additionally, the Vault audit log rotation configuration was enhanced to improve log management and operational efficiency. The previous time-based monthly rotation policy was replaced with a size-based strategy, allowing logs to rotate automatically once they reach a specified file size. This change helps prevent large log files, ensures timely log archival, and optimizes disk space usage. It also improves observability and compliance readiness by aligning log rotation with actual system activity rather than fixed intervals.
 
+Completed the setup of a performance replication cluster in the UAT environment to support high availability and realistic performance testing
