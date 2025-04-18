@@ -658,3 +658,9 @@ I got online, and by the time I logged in, the Vault server had unsealed itself 
 
 
 kubectl get configmap kube-root-ca.crt -n default -o jsonpath="{.data.ca\.crt}" > ca.crt
+
+
+Successfully completed a Proof of Concept (PoC) to integrate HashiCorp Vault with OpenShift Container Platform (OCP) using two approaches: the Vault CSI provider and the Vault Agent injector. The Vault CSI provider was evaluated for its ability to inject secrets into application pods via file mounts, supporting automatic updates and improved isolation. The Vault Agent injector was also tested for secret injection via sidecar containers, offering templating and environment variable support. Both approaches were validated for functionality, security, and compatibility with OCP workloads. The PoC outcomes are under review to finalize the most effective and maintainable integration method for production use.
+
+Additionally, the Vault audit log rotation configuration was enhanced to improve log management and operational efficiency. The previous time-based monthly rotation policy was replaced with a size-based strategy, allowing logs to rotate automatically once they reach a specified file size. This change helps prevent large log files, ensures timely log archival, and optimizes disk space usage. It also improves observability and compliance readiness by aligning log rotation with actual system activity rather than fixed intervals.
+
