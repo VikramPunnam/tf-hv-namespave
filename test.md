@@ -126,3 +126,58 @@ Vault Enterprise Performance Replication is the **only supported, secure, and sc
 - [ ] Enable audit logging and alerting
 - [ ] Set up backup schedules
 - [ ] Document new Vault endpoints and access methods
+
+
+
+
+
+
+# Vault Agent Modes: `agent.prePopulateOnly=true` vs Sidecar Mode
+
+This document compares two ways to use Vault Agent when injecting secrets into Kubernetes pods:  
+1. **`agent.prePopulateOnly=true`** — Agent runs once at startup and exits  
+2. **Continuous Sidecar** — Agent runs alongside the application for the pod's lifetime
+
+| **Aspect**                         | **`agent.prePopulateOnly=true` (Init Mode)**                    | **Continuously Running Vault Agent Sidecar**                  |
+|-----------------------------------|------------------------------------------------------------------|---------------------------------------------------------------|
+| **Agent Lifecycle**               | Runs once at pod startup, then exits                            | Runs as a sidecar container for the pod’s lifetime            |
+| **Resource Usage**                | Low (only at startup)                                           | Higher (constant CPU/memory usage)                            |
+| **Secret Access Timing**         | Secrets available at startup only                               | Secrets available at startup and during runtime               |
+| **Secret Auto-Rotation**         | Not supported                                                    | Supported (via live file updates or API calls)                |
+| **Lease Renewal**                | Not handled                                                      | Agent can renew leases automatically                          |
+| **Security Surface**             | Minimal (no running agent)                                       | Larger (agent always running and connected to Vault)          |
+| **Startup Time**                 | Fast (agent exits quickly)                                      | Slightly slower (agent must initialize and remain running)    |
+| **Application Complexity**       | Simpler (no sidecar communication needed)                       | Slightly more complex (needs coordination with agent)         |
+| **Ideal Use Cases**              | Static secrets, batch jobs, ephemeral pods                      | Dynamic secrets, long-running apps needing rotation           |
+| **Secret Updates Require**       | Pod restart or redeploy                                          | No restart; agent updates secrets in-place                    |
+| **Logging & Debugging**          | Simpler (single init log)                                       | More verbose (continuous logging from agent)                  |
+
+---
+
+## When to Use `agent.prePopulateOnly=true`
+
+- Your application only needs secrets at startup
+- Secrets don’t change frequently
+- You want to minimize sidecar overhead
+- You're running batch or short-lived jobs
+
+## When to Use a Vault Agent Sidecar
+
+- Secrets rotate often or have short TTLs
+- You use dynamic secrets (e.g., database credentials)
+- You want seamless secret updates without pod restarts
+
+---
+
+## Example Annotation for `agent.prePopulateOnly=true`
+
+```yaml
+vault.hashicorp.com/agent-inject: "true"
+vault.hashicorp.com/role: "my-app-role"
+vault.hashicorp.com/agent-pre-populate-only: "true"
+vault.hashicorp.com/agent-inject-secret-config.txt: "secret/data/my-app/config"
+vault.hashicorp.com/agent-inject-template-config.txt: |
+  {{- with secret "secret/data/my-app/config" -}}
+  DB_USERNAME={{ .Data.data.username }}
+  DB_PASSWORD={{ .Data.data.password }}
+  {{- end }}
