@@ -12,3 +12,14 @@ No action was taken from our side.
 
 Let me know if you want to tweak the tone or format.
 
+
+
+Here’s a polished rephrasing of your text:
+
+> This was not a Vault-related issue.
+The problem was with rendering the secret in Harness, which caused the deployment to fail. Since the ctask hours were exhausted, they rolled back to the previous version. Later, the Harness team tested using a test pipeline and resolved the issue by changing the double quotes to single quotes in the Harness step.
+
+
+
+Would you also like a few alternative versions depending on the tone you're aiming for (formal, concise, technical)?
+
