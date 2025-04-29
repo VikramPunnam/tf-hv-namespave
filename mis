@@ -1,25 +1,16 @@
-Sure, here’s the revised version including that point:
+Sure, here's a more polished version:
 
 
 ---
 
-We observed the following issue in the Harness pipeline reported by the user. As per the Harness team's recommendation, the pipeline was re-run, which resolved the issue.
-No further problems were observed, and no relevant entries were found in the Vault server logs.
-No action was taken from our side.
+Hi team,
+
+As indicated in the logs below, the system was unable to connect to the endpoint (azure.com). Please engage the appropriate team to investigate and resolve this issue.
+
+If the issue is related to HashiCorp Vault, kindly raise an incident ticket with detailed information about the problem using the format provided below.
 
 
 ---
 
-Let me know if you want to tweak the tone or format.
-
-
-
-Here’s a polished rephrasing of your text:
-
-> This was not a Vault-related issue.
-The problem was with rendering the secret in Harness, which caused the deployment to fail. Since the ctask hours were exhausted, they rolled back to the previous version. Later, the Harness team tested using a test pipeline and resolved the issue by changing the double quotes to single quotes in the Harness step.
-
-
-
-Would you also like a few alternative versions depending on the tone you're aiming for (formal, concise, technical)?
+Would you like help drafting the incident ticket format as well?
 
