@@ -1,16 +1,4 @@
-Sure, here's a more polished version:
-
-
----
-
-Hi team,
-
-As indicated in the logs below, the system was unable to connect to the endpoint (azure.com). Please engage the appropriate team to investigate and resolve this issue.
-
-If the issue is related to HashiCorp Vault, kindly raise an incident ticket with detailed information about the problem using the format provided below.
-
-
----
-
-Would you like help drafting the incident ticket format as well?
+The Azure secrets engine is correctly generating credentials using the configured role, and their validity has been confirmed through successful authentication via the Azure CLI.
+Log analysis indicates that the issue likely resides with Jenkins/TFE failing to establish a connection to the Azure endpoints.
+Requesting engagement with the EPL team for a deeper investigation into the connectivity issue.
 
