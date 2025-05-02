@@ -1,0 +1,28 @@
+Certainly! Here’s the updated version incorporating your new point about the second customer and the need to prevent broader impact:
+
+
+---
+
+Dear [Engineer’s Name],
+
+Thank you for your response.
+
+We would like to request that this issue be looked into on an urgent basis, as it is currently affecting our production pipelines. We are encountering intermittent context deadline exceeded errors when generating dynamic SPN credentials via the Azure Secrets Engine. These delays are resulting in credential validation failures and causing downstream pipeline disruptions.
+
+We have also observed the same issue occurring in a second customer environment. To avoid further escalations and potential impact across additional environments and customers, we request your immediate attention to this matter.
+
+Support Ticket ID: [Insert Ticket ID]
+Relevant Logs:
+
+[Insert relevant Vault or application logs here]
+
+Your prompt assistance in identifying and addressing the root cause would be highly appreciated.
+
+Best regards,
+[Your Name]
+
+
+---
+
+Would you like help formatting the logs or ticket info for clarity?
+
