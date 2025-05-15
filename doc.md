@@ -82,7 +82,7 @@ spec:
         image: busybox
         command: ["/bin/sh"]
         args: ["-c", "source /vault/secrets/app.env && env && sleep 3600"]
-
+```
 
 ---
 
