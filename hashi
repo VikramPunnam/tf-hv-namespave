@@ -1,28 +1,24 @@
-Certainly! Here’s the updated version incorporating your new point about the second customer and the need to prevent broader impact:
+Here's a professional and concise email template you can use to inform your team:
 
 
 ---
 
-Dear [Engineer’s Name],
+Subject: On-call Availability During Upcoming Holiday
 
-Thank you for your response.
+Hi Team,
 
-We would like to request that this issue be looked into on an urgent basis, as it is currently affecting our production pipelines. We are encountering intermittent context deadline exceeded errors when generating dynamic SPN credentials via the Azure Secrets Engine. These delays are resulting in credential validation failures and causing downstream pipeline disruptions.
+I will be on-call during the period from [start date] to [end date].
+However, please note that there is a local holiday in India (Hyderabad) on [holiday date].
 
-We have also observed the same issue occurring in a second customer environment. To avoid further escalations and potential impact across additional environments and customers, we request your immediate attention to this matter.
+During this day, I will still be available to attend Everbridge calls if needed, but I may not be able to actively monitor or respond to emails and incidents.
 
-Support Ticket ID: [Insert Ticket ID]
-Relevant Logs:
+Please plan accordingly, and feel free to reach out in advance if anything requires my attention before the holiday.
 
-[Insert relevant Vault or application logs here]
-
-Your prompt assistance in identifying and addressing the root cause would be highly appreciated.
-
-Best regards,
+Thanks,
 [Your Name]
 
 
 ---
 
-Would you like help formatting the logs or ticket info for clarity?
+Let me know if you’d like it adjusted for a specific tone (e.g. more casual or more formal).
 
