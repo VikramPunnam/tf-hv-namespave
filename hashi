@@ -1,24 +1,15 @@
-Here's a professional and concise email template you can use to inform your team:
+Why Vault Injector Should Be Highly Available:
+
+It's needed to inject Vault config/secrets into pods at creation.
+
+If it's down, new pods won't get secrets, causing failures.
+
+Existing pods are unaffected, but deployments and scaling can fail.
+
+High availability ensures secret injection works cluster-wide without disruption.
 
 
----
-
-Subject: On-call Availability During Upcoming Holiday
-
-Hi Team,
-
-I will be on-call during the period from [start date] to [end date].
-However, please note that there is a local holiday in India (Hyderabad) on [holiday date].
-
-During this day, I will still be available to attend Everbridge calls if needed, but I may not be able to actively monitor or respond to emails and incidents.
-
-Please plan accordingly, and feel free to reach out in advance if anything requires my attention before the holiday.
-
-Thanks,
-[Your Name]
+The Vault Agent Injector is responsible for mutating pods at creation time to inject Vault Agent containers or configurations (e.g., init/sidecar containers or volume mounts for secrets).
 
 
----
-
-Let me know if you’d like it adjusted for a specific tone (e.g. more casual or more formal).
-
+The Vault Injector should be highly available because it is critical for initializing pods with Vault-based secrets. While it doesn’t affect already running pods, it becomes a single point of failure for any new or scaling pods if not highly available.
