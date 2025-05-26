@@ -1,15 +1,4 @@
-Why Vault Injector Should Be Highly Available:
+Thank you for the clarification. Here's the revised formal version:
 
-It's needed to inject Vault config/secrets into pods at creation.
+"Monika and I were able to dedicate some time today to implement certificate generation and retrieval using the Vault PKI engine via the sidecar agent approach. The solution has been tested and validated, and it is functioning as expected. I would be glad to present our progress to you tomorrow, should you have the time."
 
-If it's down, new pods won't get secrets, causing failures.
-
-Existing pods are unaffected, but deployments and scaling can fail.
-
-High availability ensures secret injection works cluster-wide without disruption.
-
-
-The Vault Agent Injector is responsible for mutating pods at creation time to inject Vault Agent containers or configurations (e.g., init/sidecar containers or volume mounts for secrets).
-
-
-The Vault Injector should be highly available because it is critical for initializing pods with Vault-based secrets. While it doesn’t affect already running pods, it becomes a single point of failure for any new or scaling pods if not highly available.
