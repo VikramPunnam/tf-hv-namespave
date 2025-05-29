@@ -1,0 +1,1 @@
+All 200 instances attempted to generate SPN secrets, causing the Azure-side limit to be exceeded. While they plan to update their code to resolve the issue, their temporary workaround is to delete the secrets in Azure and allow all 200 instances to request them again, just to keep things running until tomorrow.
