@@ -1,4 +1,218 @@
-The Azure secrets engine is correctly generating credentials using the configured role, and their validity has been confirmed through successful authentication via the Azure CLI.
-Log analysis indicates that the issue likely resides with Jenkins/TFE failing to establish a connection to the Azure endpoints.
-Requesting engagement with the EPL team for a deeper investigation into the connectivity issue.
+Got it! Here’s the plain, detailed version of your Vault Agent Injector onboarding guide, written from the end-user (application team) perspective, with clear sections and actionable steps.
+
+
+---
+
+🔐 Vault Agent Injector Integration Guide for Applications
+
+This guide helps application teams integrate their OpenShift workloads with HashiCorp Vault using the Vault Agent Injector. It provides the steps needed to securely retrieve secrets during both startup and runtime, without hardcoding credentials.
+
+
+---
+
+📌 1. Overview
+
+To securely manage sensitive application secrets (e.g., database credentials, API keys), your application must use the Vault Agent Sidecar Injector. This method ensures secrets are retrieved at runtime and are not stored in code or static config files.
+
+Vault Agent Injector:
+
+Injects a Vault Agent container (sidecar) into your pod.
+
+Authenticates to Vault using Kubernetes Service Account JWT.
+
+Fetches secrets and writes them as environment variables or files.
+
+Optionally supports auto-refresh for secrets like DB credentials.
+
+
+
+---
+
+🛠️ 2. Prerequisites
+
+Before onboarding, your application must be:
+
+Deployed on the OpenShift Container Platform (OCP).
+
+Associated with a Kubernetes Service Account that your pod uses.
+
+
+You’ll need to provide the following to the Vault team:
+
+OCP Project/Namespace
+
+Service Account name
+
+Intended Vault secret path(s) (e.g., kv/data/myapp/config)
+
+Type of secret usage: file, environment variable, or config
+
+
+
+---
+
+🚀 3. Vault Onboarding Process
+
+Once the Vault team receives your details:
+
+1. A Vault role will be created, bound to your service account and namespace.
+
+
+2. Appropriate Vault policies will be created/granted to allow your app to read the required secrets.
+
+
+3. You’ll receive a sample deployment.yaml with the correct Vault Injector annotations.
+
+
+4. You apply these annotations in your deployment manifest.
+
+
+
+
+---
+
+⚙️ 4. How the Vault Injector Works
+
+Step-by-Step Flow:
+
+1. When your pod starts, the Vault Injector webhook injects a Vault Agent as a sidecar container.
+
+
+2. The Vault Agent uses the pod’s Service Account JWT token to authenticate with Vault.
+
+
+3. If successful, Vault returns a token scoped with permissions for secret access.
+
+
+4. Vault Agent retrieves the secrets and renders them:
+
+As files in /vault/secrets/
+
+OR as environment variables (via template rendering)
+
+
+
+5. Your application reads the secrets from the expected location at startup or runtime.
+
+
+
+
+---
+
+🧾 5. Sample Deployment with Vault Annotations
+
+Here’s an example Kubernetes deployment that uses the Vault Agent Injector to fetch secrets:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-secure-app
+  namespace: my-namespace
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "my-app-role"
+    vault.hashicorp.com/agent-inject-secret-config.txt: "kv/data/myapp/config"
+    vault.hashicorp.com/agent-inject-template-config.txt: |
+      {{- with secret "kv/data/myapp/config" -}}
+      DB_USER={{ .Data.data.username }}
+      DB_PASS={{ .Data.data.password }}
+      {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-secure-app
+  template:
+    metadata:
+      labels:
+        app: my-secure-app
+    spec:
+      serviceAccountName: my-app-sa
+      containers:
+        - name: app
+          image: myregistry/myapp:latest
+          env:
+            - name: CONFIG_PATH
+              value: /vault/secrets/config.txt
+
+💡 Secrets will be written to /vault/secrets/config.txt inside the container.
+
+
+---
+
+✅ 6. Application Team Checklist
+
+Before Vault onboarding begins, make sure:
+
+[ ] Your app is deployed on OCP.
+
+[ ] You’ve created a service account for your app pod.
+
+[ ] You’ve identified the secret paths in Vault needed by the app.
+
+[ ] You know how the app will consume secrets (file or env).
+
+[ ] You’re ready to add Vault annotations in your deployment spec.
+
+
+
+---
+
+🧠 7. Best Practices
+
+✅ Never hardcode credentials in the app or CI/CD pipeline.
+
+✅ Keep Vault roles and policies scoped to least privilege.
+
+✅ Use short-lived secrets with auto-renew or rotation (where applicable).
+
+✅ Store secrets in the Vault KV engine, versioned if needed.
+
+✅ Keep audit logs of access and usage.
+
+
+
+---
+
+❓ 8. Frequently Asked Questions (FAQ)
+
+Q: What happens if Vault is temporarily unavailable?
+A: Vault Agent caches the token and secrets locally, so secrets remain accessible until expiry. Plan for retry logic.
+
+Q: Can I rotate my secrets automatically?
+A: Yes, Vault supports dynamic secret backends (e.g., for databases). Contact the Vault team to set this up.
+
+Q: How do I verify that the secrets are injected?
+A: Exec into the pod and check /vault/secrets/ or log output from the Vault Agent.
+
+Q: Do I need to restart my app to get updated secrets?
+A: Vault Agent can be configured to reload secrets and notify apps. You'll need to integrate a signal handler or reloader process in your app.
+
+
+---
+
+📞 9. Support & Contact
+
+For Vault onboarding, configuration help, or troubleshooting:
+
+🛠️ Vault Team: vault-support@yourdomain.com
+
+🧑‍💻 OCP Platform Team: ocp-support@yourdomain.com
+
+
+Include your app name, namespace, service account, and any logs or errors when raising a request.
+
+
+---
+
+Let me know if you'd like:
+
+A Markdown version for GitHub
+
+A PDF export version
+
+A user training version with screenshots
+
+
+I can prepare those formats as well.
 
