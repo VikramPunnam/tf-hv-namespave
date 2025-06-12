@@ -1,23 +1,48 @@
-Certainly, here's a more formal and technically precise version:
+Here’s a simple, user-friendly version of the Vault Onboarding Process, presented in one box for easy inclusion in Confluence or similar internal docs. It’s written from the end-user’s perspective, with both current and future-state expectations clearly outlined.
 
 
 ---
 
-Dear Team,
+🛠️ Vault Onboarding Process
 
-Kim, Herdeep, and I participated in the troubleshooting session to analyze the reported issue. Below are our observations:
+To use Vault for secret injection in your application:
 
-The generation of dynamic Service Principal Name (SPN) credentials via the Vault Azure Secrets Engine is currently taking in excess of 90 seconds. A review of the Vault server logs did not reveal any anomalies or latency indicators that would suggest the delay originates from Vault itself. This points to a potential latency or throttling issue on the Microsoft Azure side.
+1. Contact the Vault Team
+Reach out with your app details (namespace, service account, secret path, etc.).
 
-At this stage, the following remediation options are under consideration:
 
-Extending the timeout threshold in the Python script responsible for credential validation.
+2. Manual Setup (Current Process)
+The Vault team will manually:
 
-Revisiting the current group-based role assignment strategy, which may be contributing to the observed latency.
+Create a Vault role linked to your Kubernetes service account
+
+Define a Vault policy allowing access to your secret path
+
+Ensure proper authentication method (e.g., JWT) is enabled for your namespace
+
+Share the required deployment annotations with you
+
+
+
+3. Future Automation (Planned Enhancement)
+Eventually, this process will be fully automated.
+Once your app is onboarded to OCP via ELMA or EPL pipelines:
+
+Vault resources (roles, policies, paths) will be auto-provisioned
+
+No manual intervention from the Vault team will be needed
+
+You can directly use Vault Injector by just adding the correct annotations
+
+
+
+
+> 🔄 Until automation is live, please follow the manual process to ensure Vault access is configured correctly.
+
 
 
 
 ---
 
-Let me know if you'd like to tailor this for a specific audience or stakeholder.
+Let me know if you'd like this reformatted as a panelbox or adapted for a slide deck, training document, or internal announcement.
 
