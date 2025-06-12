@@ -16,3 +16,21 @@ For Vault onboarding, configuration help, or troubleshooting:
 🛠️ Vault Team: vault-support@yourdomain.com
 
 🧑‍💻 OCP Platform Team: ocp-support@yourdomain.com
+
+🔐 Vault Agent Injector – Key Features
+
+Secure Secret Injection: Secrets like passwords and API keys are injected into pods at startup — no hardcoding or manual handling needed.
+
+Sidecar Model: Vault Agent runs as a helper container inside your pod, keeping secrets separate from your app.
+
+Kubernetes-Native: Works using annotations and admission webhooks — easy to use with existing OCP deployments.
+
+Supports Templates: Secrets can be rendered as config files or environment variables using simple templates.
+
+Auto-Renewal: Dynamic secrets (like DB credentials) can refresh automatically without restarting the app.
+
+Least Privilege Access: Access is tightly controlled using Vault roles, policies, and service accounts.
+
+Multiple Secret Types: Works with key-value secrets, databases, cloud credentials, and TLS certificates.
+
+Logging & Audit: All secret access is logged by Vault for visibility and compliance.
