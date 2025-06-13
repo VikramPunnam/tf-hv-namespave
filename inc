@@ -4,3 +4,5 @@
 
 ⚠️ It is not intended for use in production environments.
 Configuration steps, policies, and onboarding flows described here may differ from hardened production standards.
+
+ℹ️ Note: This guide is for lab/test validation only and not intended for production use
