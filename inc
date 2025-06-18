@@ -20,3 +20,10 @@ We would like to request clarification regarding the Vault container images publ
 
 Let me know if you'd like to add a subject line, sign-off, or include organizational details.
 
+
+📝 📝 Instructions:
+
+📋 📋 Steps to follow:
+
+👉 👉 Follow these steps:
+
