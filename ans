@@ -13,3 +13,14 @@
           - "FQDN: {{ ansible_fqdn }}"
           - "OS: {{ ansible_distribution }}"
           - "IP: {{ ansible_default_ipv4.address }}"
+
+
+- name: Load environment-specific vars based on inventory
+  hosts: all
+  tasks:
+    - name: Show env name
+      debug:
+        msg: "Current environment is {{ at_env }}"
+
+    - name: Load env-specific variables
+      include_vars: "vars/{{ at_env }}.yml"
