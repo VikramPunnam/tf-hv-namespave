@@ -1,0 +1,15 @@
+- name: Print gathered facts
+  hosts: localhost
+  gather_facts: yes
+  tasks:
+    - name: Print all facts
+      debug:
+        var: ansible_facts
+
+    - name: Print key system facts
+      debug:
+        msg:
+          - "Hostname: {{ ansible_hostname }}"
+          - "FQDN: {{ ansible_fqdn }}"
+          - "OS: {{ ansible_distribution }}"
+          - "IP: {{ ansible_default_ipv4.address }}"
