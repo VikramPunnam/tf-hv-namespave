@@ -23,3 +23,28 @@ curl -k -X POST 'https://<venafi-tpp-url>/vedsdk/Certificates/Request' \
     "Name": "myserver.local"
   }
 ]
+
+
+
+
+
+
+
+
+CSR_CONTENT=$(cat csr.b64)
+
+curl -k -X POST 'https://<venafi-tpp-url>/vedsdk/Certificates/Request' \
+  -H 'Content-Type: application/json' \
+  -H "Authorization:Bearer <your-api-token>" \
+  -d "{
+    \"PolicyDN\": \"\\\\VED\\\\Policy\\\\Certificates\\\\MyPolicyFolder\",
+    \"ObjectName\": \"myserver.example.com\",
+    \"CertificateSigningRequest\": \"PKCS10\",
+    \"CsrOrigin\": \"UserProvided\",
+    \"CSR\": \"$CSR_CONTENT\",
+    \"SubjectAltNames\": [
+      { \"Type\": \"DNS\", \"Name\": \"myserver.example.com\" },
+      { \"Type\": \"DNS\", \"Name\": \"myserver.internal\" },
+      { \"Type\": \"DNS\", \"Name\": \"myserver.local\" }
+    ]
+  }"
