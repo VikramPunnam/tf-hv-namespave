@@ -1,0 +1,5 @@
+Certificate management is mostly manual — developers raise requests, wait for approvals, and manually update certificates in applications.
+
+Using Harness for CD on OCP, developers still need to manually update and create Kubernetes Secret objects for certificates.
+
+This manual process causes outages from expired certs, delays in deployment, and lack of automation and control.
