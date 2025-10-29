@@ -3,3 +3,7 @@ Certificate management is mostly manual — developers raise requests, wait for 
 Using Harness for CD on OCP, developers still need to manually update and create Kubernetes Secret objects for certificates.
 
 This manual process causes outages from expired certs, delays in deployment, and lack of automation and control.
+
+Currently, in most environments, certificate management is a manual process. Developers or operations teams manually raise certificate requests, wait for approvals, copy certificates, and update them in applications. This often results in expired certificates leading to outages, delays in approvals and deployments, and a lack of visibility and control over certificate ownership and lifecycle.
+
+In our environment, Harness is used as the Continuous Deployment (CD) tool to deploy or update any object on OpenShift Container Platform (OCP). However, developers still need to manually update the certificate within the Kubernetes Secret object and create or replace the secret in the cluster. This manual intervention adds operational overhead, introduces the risk of human error, and limits end-to-end automation. We wanted to solve this by introducing automation, consistency, and policy enforcement, seamlessly integrated with our existing Certificate Authority (CA) infrastructure.
