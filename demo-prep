@@ -7,3 +7,26 @@ This manual process causes outages from expired certs, delays in deployment, and
 Currently, in most environments, certificate management is a manual process. Developers or operations teams manually raise certificate requests, wait for approvals, copy certificates, and update them in applications. This often results in expired certificates leading to outages, delays in approvals and deployments, and a lack of visibility and control over certificate ownership and lifecycle.
 
 In our environment, Harness is used as the Continuous Deployment (CD) tool to deploy or update any object on OpenShift Container Platform (OCP). However, developers still need to manually update the certificate within the Kubernetes Secret object and create or replace the secret in the cluster. This manual intervention adds operational overhead, introduces the risk of human error, and limits end-to-end automation. We wanted to solve this by introducing automation, consistency, and policy enforcement, seamlessly integrated with our existing Certificate Authority (CA) infrastructure.
+
+Here’s the refined and complete statement including that point:
+
+
+---
+
+We evaluated three integration approaches for implementing certificate management on OpenShift with HashiCorp Vault:
+
+1. Vault Agent Injector
+
+
+2. Vault Secrets Operator
+
+
+3. Cert-Manager
+
+
+
+After a detailed comparison and evaluation, we decided to proceed with Cert-Manager, as it provides native Kubernetes-style certificate lifecycle management with automated issuance and renewal through a declarative “Certificate” custom resource. It also supports direct integration with HashiCorp Vault and can manage both application TLS and mutual TLS (mTLS) certificates within the service mesh, offering a unified and automated certificate management solution across the platform.
+
+
+---
+
